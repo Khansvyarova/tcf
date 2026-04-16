@@ -8,7 +8,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1.5rem;min-height:100vh}
 h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
-
+ 
 .gen-panel{background:#fff;border:1px solid #e5e3db;border-radius:10px;padding:18px 20px;margin-bottom:1.5rem}
 .gen-title{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#888;margin-bottom:12px}
 .gen-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
@@ -18,13 +18,13 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 .btn-gen{padding:8px 20px;border-radius:8px;border:none;background:#1a1a1a;color:#fff;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .12s;display:inline-flex;align-items:center;gap:7px}
 .btn-gen:hover{background:#333}
 .btn-gen:disabled{background:#ccc;cursor:not-allowed}
-
+ 
 .shuffle-btn{padding:7px 16px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:13px;color:#1a1a1a;display:inline-flex;align-items:center;gap:6px;transition:background .12s}
 .shuffle-btn:hover{background:#f0efeb}
-
+ 
 .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap}
 .count-badge{font-size:12px;color:#888}
-
+ 
 .cards{display:flex;flex-direction:column;gap:10px}
 .card{background:#fff;border:1px solid #e5e3db;border-radius:10px;padding:16px 18px}
 .card-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
@@ -49,7 +49,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 .answer-block.show{display:block}
 .answer-fr{font-size:14px;color:#1a1a1a;line-height:1.6;margin-bottom:3px}
 .answer-note{font-size:12px;color:#666;font-style:italic}
-
+ 
 .loading-inline{display:flex;align-items:center;gap:10px;padding:2rem;color:#888;font-size:14px}
 .spinner{width:22px;height:22px;border:2px solid #e5e3db;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -71,7 +71,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 </head>
 <body>
 <h1>TCF Canada — Практика перевода</h1>
-
+ 
 <div class="key-panel" id="key-panel">
   <div style="font-size:13px;font-weight:500;margin-bottom:2px">🔑 Ваш Anthropic API-ключ</div>
   <div class="key-link">Получите бесплатно на <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a> — новым пользователям $5 на старт</div>
@@ -82,7 +82,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
     <span class="key-status" id="key-status"></span>
   </div>
 </div>
-
+ 
 <div class="gen-panel">
   <div class="gen-title">Выберите параметры и сгенерируйте упражнения</div>
   <div class="gen-row">
@@ -134,19 +134,19 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
     </button>
   </div>
 </div>
-
+ 
 <div id="content">
   <div class="empty-state">Выберите тему и нажмите «Сгенерировать»</div>
 </div>
-
+ 
 <script>
 const VERBS=["être","avoir","aller","faire","vouloir","pouvoir","devoir","savoir","venir","prendre","mettre","partir","sortir","voir","dire","lire","écrire","boire","recevoir","ouvrir","suivre","vivre","croire","connaître","tenir"];
 const ALL_TENSES=["présent","passé composé","imparfait","futur simple"];
 const ALL_TOPICS=["Travail et vie professionnelle","Immigration et vie à l'étranger","Ville, logement et mobilité","Enfants, éducation et famille","Santé et bien-être","Loisirs, culture et alimentation","Environnement et écologie","Technologie et numérique","Relations sociales et modes de vie","Société et solidarité"];
-
+ 
 const SYSTEM=`Tu es un expert en didactique du FLE et en préparation au TCF Canada.
 Tu crées des exercices de traduction russe → français pour pratiquer les verbes irréguliers.
-
+ 
 RÈGLES :
 - "russian" : phrase naturelle en russe que l'apprenant traduit en français (ne pas traduire mot à mot)
 - "french" : traduction française correcte, niveau B1-B2, style TCF Canada, 8-16 mots
@@ -154,10 +154,10 @@ RÈGLES :
 - "hint" : règle grammaticale courte EN RUSSE (ex: "partir → être в passé composé, pluriel → partis")
 - Varie les sujets : je, tu, il, elle, nous, vous, ils, elles, prénoms français et internationaux
 - JSON UNIQUEMENT — aucun texte avant ou après, aucun markdown
-
+ 
 FORMAT :
 [{"verb":"aller","tense":"passé composé","topic":"Immigration et vie à l'étranger","russian":"В прошлом году Мари переехала в Канаду в поисках работы.","french":"L'année dernière, Marie est allée au Canada pour chercher du travail.","verb_highlighted":"L'année dernière, Marie **est allée** au Canada pour chercher du travail.","hint":"aller → être в passé composé; женский род → allée"}]`;
-
+ 
 function buildPrompt(topic, tense){
   const topics = topic==="all" ? ALL_TOPICS.sort(()=>Math.random()-.5).slice(0,3).join(", ") : topic;
   const tenses = tense==="all" ? ALL_TENSES.join(", ") : tense;
@@ -168,20 +168,20 @@ Verbes irréguliers uniquement : ${VERBS.join(", ")}
 Varie les sujets grammaticaux et les verbes. Niveau B1-B2.
 Retourne UNIQUEMENT le tableau JSON (30 objets). Rien d'autre.`;
 }
-
+ 
 function extractJSON(raw){
   let t=raw.replace(/\x60\x60\x60json\s*/gi,"").replace(/\x60\x60\x60\s*/g,"").trim();
   const s=t.indexOf("["), e=t.lastIndexOf("]");
   if(s<0||e<0) throw new Error("No JSON array");
   return JSON.parse(t.slice(s,e+1).replace(/,\s*([}\]])/g,"$1"));
 }
-
+ 
 async function callAPI(topic, tense, verb){
   const r=await fetch("https://api.anthropic.com/v1/messages",{
     method:"POST",
     headers:{"Content-Type":"application/json","x-api-key":getKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
     body:JSON.stringify({
-      model:"claude-sonnet-4-20250514",
+      model:"claude-sonnet-4-6",
       max_tokens:6000,
       system:SYSTEM,
       messages:[{role:"user",content:buildPrompt(topic,tense)}]
@@ -194,16 +194,16 @@ async function callAPI(topic, tense, verb){
   const d=await r.json();
   return extractJSON(d.content.map(b=>b.text||"").join(""));
 }
-
+ 
 // State
 let DATA=[], revealed=0;
-
+ 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 function hlVerb(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong style="color:#1e40af;background:#dbeafe;padding:1px 5px;border-radius:4px">$1</strong>');}
-
+ 
 function getKey(){return localStorage.getItem("tcf_api_key")||"";}
-
+ 
 function saveKey(){
   const val=document.getElementById("key-input").value.trim();
   if(!val.startsWith("sk-")){
@@ -214,7 +214,7 @@ function saveKey(){
   localStorage.setItem("tcf_api_key",val);
   showKeyOK(val);
 }
-
+ 
 function showKeyOK(val){
   const panel=document.getElementById("key-panel");
   const inp=document.getElementById("key-input");
@@ -227,7 +227,7 @@ function showKeyOK(val){
   status.className="key-status ok";
   btnClear.style.display="inline-block";
 }
-
+ 
 function clearKey(){
   localStorage.removeItem("tcf_api_key");
   const panel=document.getElementById("key-panel");
@@ -238,13 +238,13 @@ function clearKey(){
   inp.value=""; inp.disabled=false;
   status.textContent=""; btnClear.style.display="none";
 }
-
+ 
 // Restore key on load
 (function(){
   const k=getKey();
   if(k) showKeyOK(k);
 })();
-
+ 
 async function generate(){
   if(!getKey()){
     document.getElementById("content").innerHTML=`<div class="error-msg">Сначала введите API-ключ выше.</div>`;
@@ -269,7 +269,7 @@ async function generate(){
     btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Сгенерировать заново`;
   }
 }
-
+ 
 function renderAll(){
   const wrap=document.getElementById("content");
   wrap.innerHTML=`
@@ -283,7 +283,7 @@ function renderAll(){
     <div class="cards" id="cards"></div>`;
   renderCards();
 }
-
+ 
 function renderCards(){
   const c=document.getElementById("cards"); if(!c)return;
   c.innerHTML="";
@@ -311,19 +311,19 @@ function renderCards(){
     c.appendChild(el);
   });
 }
-
+ 
 function updCount(){
   const el=document.getElementById("ct-rev"); if(el)el.textContent=revealed;
 }
-
+ 
 function norm(s){return s.trim().toLowerCase().replace(/['']/g,"'").replace(/\s+/g," ").replace(/[.,!?;:«»]/g,"");}
-
+ 
 // Extract the conjugated verb from a sentence (the part between ** **)
 function getVerb(highlighted){
   const m=(highlighted||"").match(/\*\*(.+?)\*\*/);
   return m ? norm(m[1]) : "";
 }
-
+ 
 // Find the conjugated verb in the user's input by checking if any word sequence matches
 function userHasVerb(userInput, verbForm){
   if(!verbForm) return false;
@@ -335,7 +335,7 @@ function userHasVerb(userInput, verbForm){
   }
   return false;
 }
-
+ 
 function check(i){
   const inp=document.getElementById("inp-"+i);
   const fb=document.getElementById("fb-"+i);
@@ -353,15 +353,16 @@ function check(i){
     fb.className="feedback ko"; fb.textContent="✗ Глагол неверен — попробуйте ещё";
   }
 }
-
+ 
 function reveal(i){
   document.getElementById("ans-"+i).className="answer-block show";
   const inp=document.getElementById("inp-"+i);
   if(inp&&!inp.value.trim()) inp.value=DATA[i].french;
   revealed++; updCount();
 }
-
+ 
 function doShuffle(){shuffle(DATA);revealed=0;renderCards();updCount();}
 </script>
 </body>
 </html>
+ 
