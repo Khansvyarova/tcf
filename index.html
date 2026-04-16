@@ -158,15 +158,13 @@ RÈGLES :
 FORMAT :
 [{"verb":"aller","tense":"passé composé","topic":"Immigration et vie à l'étranger","russian":"В прошлом году Мари переехала в Канаду в поисках работы.","french":"L'année dernière, Marie est allée au Canada pour chercher du travail.","verb_highlighted":"L'année dernière, Marie **est allée** au Canada pour chercher du travail.","hint":"aller → être в passé composé; женский род → allée"}]`;
  
-function buildPrompt(topic, tense){
+function buildPrompt(topic, tense, verb){
   const topics = topic==="all" ? ALL_TOPICS.sort(()=>Math.random()-.5).slice(0,3).join(", ") : topic;
   const tenses = tense==="all" ? ALL_TENSES.join(", ") : tense;
-  return `Génère exactement 30 exercices de traduction russe→français.
-Temps à utiliser : ${tenses}
-Topics TCF : ${topics}
-Verbes irréguliers uniquement : ${VERBS.join(", ")}
-Varie les sujets grammaticaux et les verbes. Niveau B1-B2.
-Retourne UNIQUEMENT le tableau JSON (30 objets). Rien d'autre.`;
+  const verbLine = (!verb || verb==="all")
+    ? "Verbes irréguliers à varier : " + VERBS.join(", ")
+    : 'RÈGLE ABSOLUE: toutes les 30 phrases utilisent UNIQUEMENT le verbe "' + verb + '". Le champ \"verb\" doit toujours valoir "' + verb + '". Aucun autre verbe conjugué.';
+  return "Génère exactement 30 exercices de traduction russe→français.\nTemps : " + tenses + "\nTopics TCF : " + topics + "\n" + verbLine + "\nVarie les sujets grammaticaux (je/tu/il/elle/nous/vous/ils/elles). Niveau B1-B2.\nRetourne UNIQUEMENT le tableau JSON (30 objets). Rien d'autre.";
 }
  
 function extractJSON(raw){
@@ -184,7 +182,7 @@ async function callAPI(topic, tense, verb){
       model:"claude-sonnet-4-6",
       max_tokens:6000,
       system:SYSTEM,
-      messages:[{role:"user",content:buildPrompt(topic,tense)}]
+      messages:[{role:"user",content:buildPrompt(topic,tense,verb)}]
     })
   });
   if(!r.ok){
