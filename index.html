@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCF — Практика перевода</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1.5rem;min-height:100vh}
+h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
+
+.gen-panel{background:#fff;border:1px solid #e5e3db;border-radius:10px;padding:18px 20px;margin-bottom:1.5rem}
+.gen-title{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#888;margin-bottom:12px}
+.gen-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.gen-group{display:flex;flex-direction:column;gap:4px}
+.gen-label{font-size:11px;color:#888}
+.gen-group select{font-size:13px;padding:7px 28px 7px 10px;border-radius:8px;border:1px solid #d0cfc7;background:#f9f8f5;color:#1a1a1a;min-width:200px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;cursor:pointer}
+.btn-gen{padding:8px 20px;border-radius:8px;border:none;background:#1a1a1a;color:#fff;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .12s;display:inline-flex;align-items:center;gap:7px}
+.btn-gen:hover{background:#333}
+.btn-gen:disabled{background:#ccc;cursor:not-allowed}
+
+.shuffle-btn{padding:7px 16px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:13px;color:#1a1a1a;display:inline-flex;align-items:center;gap:6px;transition:background .12s}
+.shuffle-btn:hover{background:#f0efeb}
+
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap}
+.count-badge{font-size:12px;color:#888}
+
+.cards{display:flex;flex-direction:column;gap:10px}
+.card{background:#fff;border:1px solid #e5e3db;border-radius:10px;padding:16px 18px}
+.card-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.badge{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:500}
+.b-verb{background:#d1fae5;color:#065f46}
+.b-tense{background:#dbeafe;color:#1e40af}
+.b-topic{background:#fce7f3;color:#9d174d}
+.ru-sentence{font-size:16px;color:#1a1a1a;line-height:1.6;margin-bottom:3px;font-weight:500}
+.ru-hint{font-size:12px;color:#999;margin-bottom:11px}
+.translation-input{width:100%;font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid #ccc;background:#f9f8f5;color:#1a1a1a;outline:none;font-family:inherit;transition:border-color .15s;margin-bottom:10px}
+.translation-input:focus{border-color:#6b7280;background:#fff}
+.translation-input.correct{border-color:#16a34a;background:#f0fdf4}
+.translation-input.wrong{border-color:#dc2626;background:#fef2f2}
+.card-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn-check{padding:6px 14px;border-radius:7px;border:1px solid #d0cfc7;background:#fff;cursor:pointer;font-size:12px;transition:background .12s}
+.btn-check:hover{background:#f0efeb}
+.btn-reveal{padding:6px 14px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:12px;color:#999;text-decoration:underline}
+.feedback{font-size:12px;font-weight:500}
+.feedback.ok{color:#16a34a}
+.feedback.ko{color:#dc2626}
+.answer-block{margin-top:10px;padding:10px 12px;background:#f0f9ff;border-radius:8px;border-left:3px solid #93c5fd;display:none}
+.answer-block.show{display:block}
+.answer-fr{font-size:14px;color:#1a1a1a;line-height:1.6;margin-bottom:3px}
+.answer-note{font-size:12px;color:#666;font-style:italic}
+
+.loading-inline{display:flex;align-items:center;gap:10px;padding:2rem;color:#888;font-size:14px}
+.spinner{width:22px;height:22px;border:2px solid #e5e3db;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-msg{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:14px 16px;color:#991b1b;font-size:13px}
+.key-panel{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 18px;margin-bottom:1.5rem}
+.key-panel.ok{background:#f0fdf4;border-color:#86efac}
+.key-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.key-input{flex:1;min-width:220px;font-size:13px;padding:7px 12px;border-radius:8px;border:1px solid #d0cfc7;background:#fff;color:#1a1a1a;outline:none;font-family:monospace;letter-spacing:.03em}
+.key-input:focus{border-color:#6b7280}
+.btn-key{padding:7px 14px;border-radius:8px;border:none;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;white-space:nowrap}
+.btn-key:hover{background:#333}
+.btn-key-clear{padding:7px 14px;border-radius:8px;border:1px solid #ccc;background:#fff;font-size:12px;cursor:pointer;color:#888}
+.key-status{font-size:12px;font-weight:500}
+.key-status.ok{color:#16a34a}
+.key-link{font-size:12px;color:#92400e}
+.key-link a{color:#b45309;text-decoration:underline}
+.empty-state{text-align:center;padding:3rem;color:#aaa;font-size:14px}
+</style>
+</head>
+<body>
+<h1>TCF Canada — Практика перевода</h1>
+
+<div class="key-panel" id="key-panel">
+  <div style="font-size:13px;font-weight:500;margin-bottom:2px">🔑 Ваш Anthropic API-ключ</div>
+  <div class="key-link">Получите бесплатно на <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a> — новым пользователям $5 на старт</div>
+  <div class="key-row">
+    <input type="password" class="key-input" id="key-input" placeholder="sk-ant-api03-…" autocomplete="off" onkeydown="if(event.key==='Enter')saveKey()">
+    <button class="btn-key" onclick="saveKey()">Сохранить</button>
+    <button class="btn-key-clear" onclick="clearKey()" id="btn-clear" style="display:none">Сменить ключ</button>
+    <span class="key-status" id="key-status"></span>
+  </div>
+</div>
+
+<div class="gen-panel">
+  <div class="gen-title">Выберите параметры и сгенерируйте упражнения</div>
+  <div class="gen-row">
+    <div class="gen-group">
+      <span class="gen-label">Тема</span>
+      <select id="sel-topic">
+        <option value="all">Все темы (случайно)</option>
+        <option>Travail et vie professionnelle</option>
+        <option>Immigration et vie à l'étranger</option>
+        <option>Ville, logement et mobilité</option>
+        <option>Enfants, éducation et famille</option>
+        <option>Santé et bien-être</option>
+        <option>Loisirs, culture et alimentation</option>
+        <option>Environnement et écologie</option>
+        <option>Technologie et numérique</option>
+        <option>Relations sociales et modes de vie</option>
+        <option>Société et solidarité</option>
+      </select>
+    </div>
+    <div class="gen-group">
+      <span class="gen-label">Глагол</span>
+      <select id="sel-verb">
+        <option value="all">Все глаголы</option>
+        <option>être</option>
+        <option>avoir</option>
+        <option>aller</option>
+        <option>faire</option>
+        <option>vouloir</option>
+        <option>pouvoir</option>
+        <option>devoir</option>
+        <option>savoir</option>
+        <option>venir</option>
+        <option>prendre</option>
+      </select>
+    </div>
+    <div class="gen-group">
+      <span class="gen-label">Время</span>
+      <select id="sel-tense">
+        <option value="all">Все времена (случайно)</option>
+        <option>présent</option>
+        <option>passé composé</option>
+        <option>imparfait</option>
+        <option>futur simple</option>
+      </select>
+    </div>
+    <button class="btn-gen" id="btn-gen" onclick="generate()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      Сгенерировать 30 упражнений
+    </button>
+  </div>
+</div>
+
+<div id="content">
+  <div class="empty-state">Выберите тему и нажмите «Сгенерировать»</div>
+</div>
+
+<script>
+const VERBS=["être","avoir","aller","faire","vouloir","pouvoir","devoir","savoir","venir","prendre","mettre","partir","sortir","voir","dire","lire","écrire","boire","recevoir","ouvrir","suivre","vivre","croire","connaître","tenir"];
+const ALL_TENSES=["présent","passé composé","imparfait","futur simple"];
+const ALL_TOPICS=["Travail et vie professionnelle","Immigration et vie à l'étranger","Ville, logement et mobilité","Enfants, éducation et famille","Santé et bien-être","Loisirs, culture et alimentation","Environnement et écologie","Technologie et numérique","Relations sociales et modes de vie","Société et solidarité"];
+
+const SYSTEM=`Tu es un expert en didactique du FLE et en préparation au TCF Canada.
+Tu crées des exercices de traduction russe → français pour pratiquer les verbes irréguliers.
+
+RÈGLES :
+- "russian" : phrase naturelle en russe que l'apprenant traduit en français (ne pas traduire mot à mot)
+- "french" : traduction française correcte, niveau B1-B2, style TCF Canada, 8-16 mots
+- "verb_highlighted" : identique à "french" mais le verbe conjugué entre **double astérisques**
+- "hint" : règle grammaticale courte EN RUSSE (ex: "partir → être в passé composé, pluriel → partis")
+- Varie les sujets : je, tu, il, elle, nous, vous, ils, elles, prénoms français et internationaux
+- JSON UNIQUEMENT — aucun texte avant ou après, aucun markdown
+
+FORMAT :
+[{"verb":"aller","tense":"passé composé","topic":"Immigration et vie à l'étranger","russian":"В прошлом году Мари переехала в Канаду в поисках работы.","french":"L'année dernière, Marie est allée au Canada pour chercher du travail.","verb_highlighted":"L'année dernière, Marie **est allée** au Canada pour chercher du travail.","hint":"aller → être в passé composé; женский род → allée"}]`;
+
+function buildPrompt(topic, tense){
+  const topics = topic==="all" ? ALL_TOPICS.sort(()=>Math.random()-.5).slice(0,3).join(", ") : topic;
+  const tenses = tense==="all" ? ALL_TENSES.join(", ") : tense;
+  return `Génère exactement 30 exercices de traduction russe→français.
+Temps à utiliser : ${tenses}
+Topics TCF : ${topics}
+Verbes irréguliers uniquement : ${VERBS.join(", ")}
+Varie les sujets grammaticaux et les verbes. Niveau B1-B2.
+Retourne UNIQUEMENT le tableau JSON (30 objets). Rien d'autre.`;
+}
+
+function extractJSON(raw){
+  let t=raw.replace(/\x60\x60\x60json\s*/gi,"").replace(/\x60\x60\x60\s*/g,"").trim();
+  const s=t.indexOf("["), e=t.lastIndexOf("]");
+  if(s<0||e<0) throw new Error("No JSON array");
+  return JSON.parse(t.slice(s,e+1).replace(/,\s*([}\]])/g,"$1"));
+}
+
+async function callAPI(topic, tense, verb){
+  const r=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json","x-api-key":getKey(),"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:6000,
+      system:SYSTEM,
+      messages:[{role:"user",content:buildPrompt(topic,tense)}]
+    })
+  });
+  if(!r.ok){
+    const txt=await r.text().catch(()=>"");
+    throw new Error("API "+r.status+(txt?" — "+txt.slice(0,120):""));
+  }
+  const d=await r.json();
+  return extractJSON(d.content.map(b=>b.text||"").join(""));
+}
+
+// State
+let DATA=[], revealed=0;
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function hlVerb(s){return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong style="color:#1e40af;background:#dbeafe;padding:1px 5px;border-radius:4px">$1</strong>');}
+
+function getKey(){return localStorage.getItem("tcf_api_key")||"";}
+
+function saveKey(){
+  const val=document.getElementById("key-input").value.trim();
+  if(!val.startsWith("sk-")){
+    document.getElementById("key-status").textContent="⚠ Ключ должен начинаться с sk-";
+    document.getElementById("key-status").style.color="#b45309";
+    return;
+  }
+  localStorage.setItem("tcf_api_key",val);
+  showKeyOK(val);
+}
+
+function showKeyOK(val){
+  const panel=document.getElementById("key-panel");
+  const inp=document.getElementById("key-input");
+  const status=document.getElementById("key-status");
+  const btnClear=document.getElementById("btn-clear");
+  panel.className="key-panel ok";
+  inp.value="•".repeat(12)+"…"+val.slice(-4);
+  inp.disabled=true;
+  status.textContent="✓ Ключ сохранён";
+  status.className="key-status ok";
+  btnClear.style.display="inline-block";
+}
+
+function clearKey(){
+  localStorage.removeItem("tcf_api_key");
+  const panel=document.getElementById("key-panel");
+  const inp=document.getElementById("key-input");
+  const status=document.getElementById("key-status");
+  const btnClear=document.getElementById("btn-clear");
+  panel.className="key-panel";
+  inp.value=""; inp.disabled=false;
+  status.textContent=""; btnClear.style.display="none";
+}
+
+// Restore key on load
+(function(){
+  const k=getKey();
+  if(k) showKeyOK(k);
+})();
+
+async function generate(){
+  if(!getKey()){
+    document.getElementById("content").innerHTML=`<div class="error-msg">Сначала введите API-ключ выше.</div>`;
+    return;
+  }
+  const topic=document.getElementById("sel-topic").value;
+  const tense=document.getElementById("sel-tense").value;
+  const verb=document.getElementById("sel-verb").value;
+  const btn=document.getElementById("btn-gen");
+  btn.disabled=true;
+  btn.innerHTML=`<span class="spinner" style="width:14px;height:14px;border-width:2px"></span> Генерация…`;
+  document.getElementById("content").innerHTML=`<div class="loading-inline"><div class="spinner"></div>Генерирую упражнения — обычно 10–15 секунд…</div>`;
+  try{
+    DATA=await callAPI(topic,tense,verb);
+    shuffle(DATA);
+    revealed=0;
+    renderAll();
+  }catch(e){
+    document.getElementById("content").innerHTML=`<div class="error-msg">Ошибка: ${esc(String(e))}. Попробуйте ещё раз.</div>`;
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Сгенерировать заново`;
+  }
+}
+
+function renderAll(){
+  const wrap=document.getElementById("content");
+  wrap.innerHTML=`
+    <div class="toolbar">
+      <button class="shuffle-btn" onclick="doShuffle()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+        Перемешать
+      </button>
+      <span class="count-badge" id="ct">${DATA.length} упражнений · <span id="ct-rev">0</span> открыто</span>
+    </div>
+    <div class="cards" id="cards"></div>`;
+  renderCards();
+}
+
+function renderCards(){
+  const c=document.getElementById("cards"); if(!c)return;
+  c.innerHTML="";
+  DATA.forEach((d,i)=>{
+    const el=document.createElement("div");
+    el.className="card"; el.id="card-"+i;
+    el.innerHTML=`
+      <div class="card-badges">
+        <span class="badge b-verb">${esc(d.verb)}</span>
+        <span class="badge b-tense">${esc(d.tense)}</span>
+        <span class="badge b-topic">${esc(d.topic)}</span>
+      </div>
+      <div class="ru-sentence">${esc(d.russian)}</div>
+      <div class="ru-hint">Переведите на французский · глагол: <em>${esc(d.verb)}</em> · ${esc(d.tense)}</div>
+      <input type="text" class="translation-input" id="inp-${i}" placeholder="Votre traduction en français…" autocomplete="off" onkeydown="if(event.key==='Enter')check(${i})">
+      <div class="card-actions">
+        <button class="btn-check" onclick="check(${i})">Проверить</button>
+        <button class="btn-reveal" onclick="reveal(${i})">Показать ответ</button>
+        <span class="feedback" id="fb-${i}"></span>
+      </div>
+      <div class="answer-block" id="ans-${i}">
+        <div class="answer-fr">${hlVerb(d.verb_highlighted||d.french)}</div>
+        <div class="answer-note">${esc(d.hint)}</div>
+      </div>`;
+    c.appendChild(el);
+  });
+}
+
+function updCount(){
+  const el=document.getElementById("ct-rev"); if(el)el.textContent=revealed;
+}
+
+function norm(s){return s.trim().toLowerCase().replace(/['']/g,"'").replace(/\s+/g," ").replace(/[.,!?;:«»]/g,"");}
+
+// Extract the conjugated verb from a sentence (the part between ** **)
+function getVerb(highlighted){
+  const m=(highlighted||"").match(/\*\*(.+?)\*\*/);
+  return m ? norm(m[1]) : "";
+}
+
+// Find the conjugated verb in the user's input by checking if any word sequence matches
+function userHasVerb(userInput, verbForm){
+  if(!verbForm) return false;
+  const words = norm(userInput).split(" ");
+  const vwords = verbForm.split(" ");
+  // sliding window search for multi-word forms (e.g. "est allée")
+  for(let i=0;i<=words.length-vwords.length;i++){
+    if(vwords.every((w,j)=>w===words[i+j])) return true;
+  }
+  return false;
+}
+
+function check(i){
+  const inp=document.getElementById("inp-"+i);
+  const fb=document.getElementById("fb-"+i);
+  if(!inp||!DATA[i])return;
+  const d=DATA[i];
+  const correctVerb=getVerb(d.verb_highlighted||d.french);
+  const hasVerb=userHasVerb(inp.value, correctVerb);
+  if(hasVerb){
+    inp.className="translation-input correct";
+    fb.className="feedback ok"; fb.textContent="✓ Верно!";
+    document.getElementById("ans-"+i).className="answer-block show";
+    revealed++; updCount();
+  } else {
+    inp.className="translation-input wrong";
+    fb.className="feedback ko"; fb.textContent="✗ Глагол неверен — попробуйте ещё";
+  }
+}
+
+function reveal(i){
+  document.getElementById("ans-"+i).className="answer-block show";
+  const inp=document.getElementById("inp-"+i);
+  if(inp&&!inp.value.trim()) inp.value=DATA[i].french;
+  revealed++; updCount();
+}
+
+function doShuffle(){shuffle(DATA);revealed=0;renderCards();updCount();}
+</script>
+</body>
+</html>
