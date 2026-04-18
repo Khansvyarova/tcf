@@ -3,26 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TCF — Практика перевода</title>
+<title>TCF Canada — Практика</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f4f0;color:#1a1a1a;padding:1.5rem;min-height:100vh}
 h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
-.gen-panel{background:#fff;border:1px solid #e5e3db;border-radius:10px;padding:18px 20px;margin-bottom:1.5rem}
-.gen-title{font-size:12px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#888;margin-bottom:12px}
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:#e8e7e3;border-radius:10px;padding:4px}
+.tab{flex:1;padding:8px 12px;border:none;background:transparent;border-radius:8px;font-size:13px;cursor:pointer;color:#666;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.tab.active{background:#fff;color:#1a1a1a;font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab-count{background:#dbeafe;color:#1e40af;border-radius:20px;font-size:11px;padding:1px 7px;font-weight:600}
+.gen-panel{background:#fff;border:1px solid #e5e3db;border-radius:12px;padding:18px 20px;margin-bottom:1.5rem}
+.gen-title{font-size:12px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:#888;margin-bottom:12px}
 .gen-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
 .gen-group{display:flex;flex-direction:column;gap:4px}
 .gen-label{font-size:11px;color:#888}
-.gen-group select{font-size:13px;padding:7px 28px 7px 10px;border-radius:8px;border:1px solid #d0cfc7;background:#f9f8f5;color:#1a1a1a;min-width:200px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;cursor:pointer}
-.btn-gen{padding:8px 20px;border-radius:8px;border:none;background:#1a1a1a;color:#fff;font-size:13px;cursor:pointer;white-space:nowrap;transition:background .12s;display:inline-flex;align-items:center;gap:7px}
-.btn-gen:hover{background:#333}
-.btn-gen:disabled{background:#ccc;cursor:not-allowed}
-.shuffle-btn{padding:7px 16px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer;font-size:13px;color:#1a1a1a;display:inline-flex;align-items:center;gap:6px;transition:background .12s}
-.shuffle-btn:hover{background:#f0efeb}
+.gen-group select{font-size:13px;padding:7px 28px 7px 10px;border-radius:8px;border:1px solid #d0cfc7;background:#f9f8f5;color:#1a1a1a;min-width:180px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;cursor:pointer;font-family:inherit}
+.btn-primary{padding:8px 20px;border-radius:8px;border:none;background:#1a1a1a;color:#fff;font-size:13px;cursor:pointer;white-space:nowrap;transition:opacity .12s;display:inline-flex;align-items:center;gap:7px;font-family:inherit}
+.btn-primary:hover{opacity:.8}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.btn-outline{padding:7px 14px;border-radius:8px;border:1px solid #d0cfc7;background:#fff;cursor:pointer;font-size:12px;color:#1a1a1a;display:inline-flex;align-items:center;gap:6px;transition:background .12s;font-family:inherit}
+.btn-outline:hover{background:#f0efeb}
 .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap}
 .count-badge{font-size:12px;color:#888}
 .cards{display:flex;flex-direction:column;gap:10px}
-.card{background:#fff;border:1px solid #e5e3db;border-radius:10px;padding:16px 18px}
+.card{background:#fff;border:1px solid #e5e3db;border-radius:12px;padding:16px 18px;position:relative}
 .card-badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
 .badge{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:500}
 .b-verb{background:#d1fae5;color:#065f46}
@@ -35,164 +39,604 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 .translation-input.correct{border-color:#16a34a;background:#f0fdf4}
 .translation-input.wrong{border-color:#dc2626;background:#fef2f2}
 .card-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.btn-check{padding:6px 14px;border-radius:7px;border:1px solid #d0cfc7;background:#fff;cursor:pointer;font-size:12px;transition:background .12s}
+.btn-check{padding:6px 14px;border-radius:7px;border:1px solid #d0cfc7;background:#fff;cursor:pointer;font-size:12px;transition:background .12s;font-family:inherit;color:#1a1a1a}
 .btn-check:hover{background:#f0efeb}
-.btn-reveal{padding:6px 14px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:12px;color:#999;text-decoration:underline}
+.btn-reveal{padding:6px 14px;border-radius:7px;border:none;background:transparent;cursor:pointer;font-size:12px;color:#999;text-decoration:underline;font-family:inherit}
 .feedback{font-size:12px;font-weight:500}
 .feedback.ok{color:#16a34a}
 .feedback.ko{color:#dc2626}
-.answer-block{margin-top:10px;padding:10px 12px;background:#f0f9ff;border-radius:8px;border-left:3px solid #93c5fd;display:none}
+.answer-block{margin-top:10px;padding:10px 12px;background:#f0f9ff;border-radius:8px;border-left:3px solid #93c5fd;display:none;position:relative}
 .answer-block.show{display:block}
-.answer-fr{font-size:14px;color:#1a1a1a;line-height:1.6;margin-bottom:3px}
+.answer-fr{font-size:14px;color:#1a1a1a;line-height:1.6;margin-bottom:3px;user-select:text;cursor:text}
 .answer-note{font-size:12px;color:#666;font-style:italic}
+.select-hint{font-size:11px;color:#93c5fd;margin-top:6px;display:none}
+.answer-block.show .select-hint{display:block}
+.btn-save{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;border:1px solid #d0cfc7;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:#aaa}
+.btn-save:hover{background:#dbeafe;border-color:#93c5fd;color:#1e40af}
+.btn-save.saved{background:#d1fae5;border-color:#6ee7b7;color:#065f46}
+.selection-popup{position:fixed;background:#1a1a1a;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap;z-index:200;display:none;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.selection-popup:hover{background:#333}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:300;padding:1rem}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:24px;max-width:440px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.modal-title{font-size:15px;font-weight:500;margin-bottom:4px}
+.modal-sub{font-size:13px;color:#666;margin-bottom:16px}
+.modal-field{margin-bottom:12px}
+.modal-label{font-size:11px;color:#888;font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.modal-input{width:100%;font-size:14px;padding:9px 12px;border-radius:8px;border:1px solid #d0cfc7;background:#f9f8f5;color:#1a1a1a;outline:none;font-family:inherit;transition:border-color .15s}
+.modal-input:focus{border-color:#6b7280;background:#fff}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.modal-loading{display:flex;align-items:center;gap:8px;font-size:13px;color:#888;margin:8px 0}
+.vocab-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.vocab-actions{display:flex;gap:8px;flex-wrap:wrap}
+.vocab-list{display:flex;flex-direction:column;gap:8px}
+.vocab-item{background:#fff;border:1px solid #e5e3db;border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:12px}
+.vocab-fr{font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:2px}
+.vocab-ru{font-size:13px;color:#666}
+.vocab-text{flex:1}
+.btn-del{background:none;border:none;cursor:pointer;color:#ccc;font-size:18px;padding:2px 6px;border-radius:4px;transition:color .12s;line-height:1;font-family:inherit}
+.btn-del:hover{color:#dc2626}
+.export-area{width:100%;font-size:12px;font-family:monospace;padding:10px 12px;border-radius:8px;border:1px solid #d0cfc7;background:#f9f8f5;color:#1a1a1a;height:160px;resize:vertical;margin-top:12px}
+.fc-container{max-width:500px;margin:0 auto}
+.fc-progress{height:4px;background:#e5e3db;border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.fc-progress-bar{height:100%;background:#1a1a1a;border-radius:2px;transition:width .3s}
+.fc-card{background:#fff;border:1px solid #e5e3db;border-radius:16px;padding:2.5rem 2rem;text-align:center;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;margin-bottom:1rem}
+.fc-side-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#999;margin-bottom:12px;font-weight:500}
+.fc-text{font-size:20px;font-weight:500;line-height:1.5;color:#1a1a1a}
+.fc-input-area{width:100%;margin-top:1.5rem;text-align:left}
+.fc-type-input{width:100%;font-size:15px;padding:10px 14px;border-radius:10px;border:1px solid #d0cfc7;background:#f9f8f5;color:#1a1a1a;outline:none;font-family:inherit;transition:border-color .15s}
+.fc-type-input:focus{border-color:#6b7280;background:#fff}
+.fc-type-input.fc-correct{border-color:#16a34a;background:#f0fdf4}
+.fc-type-input.fc-wrong{border-color:#dc2626;background:#fef2f2}
+.fc-result{margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;display:none}
+.fc-result.show{display:block}
+.fc-result.ok{background:#f0fdf4;color:#166534;border-left:3px solid #4ade80}
+.fc-result.ko{background:#fef2f2;color:#991b1b;border-left:3px solid #fca5a5}
+.fc-correct-answer{font-weight:500;margin-top:4px}
+.fc-actions{display:flex;gap:10px;margin-bottom:1.5rem}
+.btn-fc-know{flex:1;padding:12px;border-radius:10px;border:none;background:#d1fae5;color:#065f46;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .12s}
+.btn-fc-know:hover{opacity:.8}
+.btn-fc-skip{flex:1;padding:12px;border-radius:10px;border:none;background:#fce7f3;color:#9d174d;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;transition:opacity .12s}
+.btn-fc-skip:hover{opacity:.8}
+.fc-stats{display:flex;gap:12px;justify-content:center;font-size:13px;color:#666}
+.fc-stat{display:flex;align-items:center;gap:4px}
+.dot-know{width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block}
+.dot-skip{width:8px;height:8px;border-radius:50%;background:#dc2626;display:inline-block}
+.fc-done{text-align:center;padding:2rem}
+.fc-done-title{font-size:22px;font-weight:500;margin-bottom:8px}
+.fc-done-sub{font-size:14px;color:#666;margin-bottom:1.5rem}
+.fc-check-btn{padding:8px 20px;border-radius:8px;border:none;background:#1a1a1a;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;margin-top:10px}
 .loading-inline{display:flex;align-items:center;gap:10px;padding:2rem;color:#888;font-size:14px}
 .spinner{width:22px;height:22px;border:2px solid #e5e3db;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.spinner-sm{width:14px;height:14px;border:2px solid #e5e3db;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 .error-msg{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:14px 16px;color:#991b1b;font-size:13px}
 .empty-state{text-align:center;padding:3rem;color:#aaa;font-size:14px}
 </style>
-</head>
-<body>
-<h1>TCF Canada — Практика перевода</h1>
-<div class="gen-panel">
-  <div class="gen-title">Выберите параметры и сгенерируйте упражнения</div>
-  <div class="gen-row">
-    <div class="gen-group">
-      <span class="gen-label">Тема</span>
-      <select id="sel-topic">
-        <option value="all">Все темы (случайно)</option>
-        <option>Travail et vie professionnelle</option>
-        <option>Immigration et vie à l'étranger</option>
-        <option>Ville, logement et mobilité</option>
-        <option>Enfants, éducation et famille</option>
-        <option>Santé et bien-être</option>
-        <option>Loisirs, culture et alimentation</option>
-        <option>Environnement et écologie</option>
-        <option>Technologie et numérique</option>
-        <option>Relations sociales et modes de vie</option>
-        <option>Société et solidarité</option>
-      </select>
+</head><body>
+<h1>TCF Canada — Практика + Словарь</h1>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('practice',this)">Упражнения</button>
+  <button class="tab" onclick="switchTab('vocab',this)">
+    Мой словарь <span class="tab-count" id="vocab-count">0</span>
+  </button>
+  <button class="tab" onclick="switchTab('flash',this)">Flashcards</button>
+</div>
+
+<!-- PRACTICE TAB -->
+<div id="pane-practice">
+  <div class="gen-panel">
+    <div class="gen-title">Параметры генерации</div>
+    <div class="gen-row">
+      <div class="gen-group">
+        <span class="gen-label">Тема</span>
+        <select id="sel-topic">
+          <option value="all">Все темы (случайно)</option>
+          <option>Travail et vie professionnelle</option>
+          <option>Immigration et vie à l'étranger</option>
+          <option>Ville, logement et mobilité</option>
+          <option>Enfants, éducation et famille</option>
+          <option>Santé et bien-être</option>
+          <option>Loisirs, culture et alimentation</option>
+          <option>Environnement et écologie</option>
+          <option>Technologie et numérique</option>
+          <option>Relations sociales et modes de vie</option>
+          <option>Société et solidarité</option>
+        </select>
+      </div>
+      <div class="gen-group">
+        <span class="gen-label">Глагол</span>
+        <select id="sel-verb">
+          <option value="all">Все глаголы</option>
+          <option>être</option><option>avoir</option><option>aller</option><option>faire</option>
+          <option>vouloir</option><option>pouvoir</option><option>devoir</option>
+          <option>savoir</option><option>venir</option><option>prendre</option>
+        </select>
+      </div>
+      <div class="gen-group">
+        <span class="gen-label">Время</span>
+        <select id="sel-tense">
+          <option value="all">Все времена (случайно)</option>
+          <option>présent</option><option>passé composé</option>
+          <option>imparfait</option><option>futur simple</option>
+        </select>
+      </div>
+      <button class="btn-primary" id="btn-gen" onclick="generate()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        Сгенерировать 30 упражнений
+      </button>
     </div>
-    <div class="gen-group">
-      <span class="gen-label">Глагол</span>
-      <select id="sel-verb">
-        <option value="all">Все глаголы</option>
-        <option>être</option>
-        <option>avoir</option>
-        <option>aller</option>
-        <option>faire</option>
-        <option>vouloir</option>
-        <option>pouvoir</option>
-        <option>devoir</option>
-        <option>savoir</option>
-        <option>venir</option>
-        <option>prendre</option>
-      </select>
+  </div>
+  <div id="content"><div class="empty-state">Выберите тему и нажмите «Сгенерировать»</div></div>
+</div>
+
+<!-- VOCAB TAB -->
+<div id="pane-vocab" style="display:none">
+  <div class="vocab-header">
+    <span style="font-size:14px;color:#666" id="vocab-header-count">0 выражений сохранено</span>
+    <div class="vocab-actions">
+      <button class="btn-outline" onclick="openExportModal()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Экспорт для Quizlet
+      </button>
+      <button class="btn-outline" onclick="clearVocab()" style="color:#dc2626;border-color:#fca5a5">Очистить всё</button>
     </div>
-    <div class="gen-group">
-      <span class="gen-label">Время</span>
-      <select id="sel-tense">
-        <option value="all">Все времена (случайно)</option>
-        <option>présent</option>
-        <option>passé composé</option>
-        <option>imparfait</option>
-        <option>futur simple</option>
-      </select>
-    </div>
-    <button class="btn-gen" id="btn-gen" onclick="generate()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-      Сгенерировать 30 упражнений
-    </button>
+  </div>
+  <div class="vocab-list" id="vocab-list">
+    <div class="empty-state">Выделите текст в ответе карточки, чтобы сохранить выражение</div>
   </div>
 </div>
-<div id="content">
-  <div class="empty-state">Выберите тему и нажмите «Сгенерировать»</div>
+
+<!-- FLASHCARDS TAB -->
+<div id="pane-flash" style="display:none">
+  <div id="flash-content"></div>
 </div>
-<script>
-const VERBS=["être","avoir","aller","faire","vouloir","pouvoir","devoir","savoir","venir","prendre","mettre","partir","sortir","voir","dire","lire","écrire","boire","recevoir","ouvrir","suivre","vivre","croire","connaître","tenir"];
-const ALL_TENSES=["présent","passé composé","imparfait","futur simple"];
-const ALL_TOPICS=["Travail et vie professionnelle","Immigration et vie à l'étranger","Ville, logement et mobilité","Enfants, éducation et famille","Santé et bien-être","Loisirs, culture et alimentation","Environnement et écologie","Technologie et numérique","Relations sociales et modes de vie","Société et solidarité"];
-const SYSTEM=`Tu es un expert en didactique du FLE et en préparation au TCF Canada. Tu crées des exercices de traduction russe → français pour pratiquer les verbes irréguliers. RÈGLES : "russian" : phrase naturelle en russe; "french" : traduction française correcte B1-B2; "verb_highlighted" : identique à "french" mais le verbe conjugué entre **double astérisques**; "hint" : règle grammaticale courte EN RUSSE. JSON UNIQUEMENT. FORMAT : [{"verb":"aller","tense":"passé composé","topic":"Immigration et vie à l'étranger","russian":"В прошлом году Мари переехала в Канаду.","french":"L'année dernière, Marie est allée au Canada.","verb_highlighted":"L'année dernière, Marie **est allée** au Canada.","hint":"aller → être в passé composé; женский род → allée"}]`;
-function buildPrompt(topic,tense,verb){
-  const topics=topic==="all"?ALL_TOPICS.sort(()=>Math.random()-.5).slice(0,3).join(", "):topic;
-  const tenses=tense==="all"?ALL_TENSES.join(", "):tense;
-  const verbLine=(!verb||verb==="all")?"Verbes irréguliers à varier : "+VERBS.join(", "):'RÈGLE ABSOLUE: toutes les 30 phrases utilisent UNIQUEMENT le verbe "'+verb+'". Le champ "verb" doit toujours valoir "'+verb+'". Aucun autre verbe conjugué.';
-  return "Génère exactement 30 exercices de traduction russe→français.\nTemps : "+tenses+"\nTopics TCF : "+topics+"\n"+verbLine+"\nVarie les sujets grammaticaux. Niveau B1-B2.\nRetourne UNIQUEMENT le tableau JSON (30 objets). Rien d'autre.";
-}
-function extractJSON(raw){
-  let t=raw.replace(/```json\s*/gi,"").replace(/```\s*/g,"").trim();
-  const s=t.indexOf("["),e=t.lastIndexOf("]");
-  if(s<0||e<0)throw new Error("No JSON array");
-  return JSON.parse(t.slice(s,e+1).replace(/,\s*([}\]])/g,"$1"));
-}
-async function callAPI(topic,tense,verb){
-  const r=await fetch("https://misty-mud-2089.khansvyarova.workers.dev",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:6000,system:SYSTEM,messages:[{role:"user",content:buildPrompt(topic,tense,verb)}]})
+
+<!-- Selection popup -->
+<div class="selection-popup" id="sel-popup" onclick="openSaveModal()">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+  Сохранить в словарь
+</div>
+
+<!-- Save confirmation modal -->
+<div class="modal-overlay" id="save-modal" onclick="closeSaveModal(event)">
+  <div class="modal-box">
+    <div class="modal-title">Сохранить выражение</div>
+    <div class="modal-sub">Проверьте и при необходимости отредактируйте перед сохранением</div>
+    <div class="modal-field">
+      <div class="modal-label">Французский</div>
+      <input class="modal-input" id="save-fr" type="text" placeholder="Выражение на французском">
+    </div>
+    <div class="modal-field">
+      <div class="modal-label">Перевод на русский</div>
+      <div class="modal-loading" id="save-loading" style="display:none">
+        <div class="spinner-sm"></div> Переводим…
+      </div>
+      <input class="modal-input" id="save-ru" type="text" placeholder="Перевод">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="document.getElementById('save-modal').classList.remove('show')">Отмена</button>
+      <button class="btn-primary" onclick="confirmSave()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export modal -->
+<div class="modal-overlay" id="export-modal" onclick="closeExportModal(event)">
+  <div class="modal-box">
+    <div class="modal-title">Экспорт в Quizlet</div>
+    <div class="modal-sub">
+      Скопируйте текст и вставьте в Quizlet → «Создать набор» → «Импортировать».<br>
+      Разделитель терминов: <strong>Tab</strong> · Разделитель карточек: <strong>новая строка</strong>
+    </div>
+    <textarea class="export-area" id="export-text" readonly></textarea>
+    <div class="modal-actions" style="margin-top:12px">
+      <button class="btn-outline" onclick="document.getElementById('export-modal').classList.remove('show')">Закрыть</button>
+      <button class="btn-outline" onclick="copyExport()">Скопировать</button>
+      <button class="btn-primary" onclick="window.open('https://quizlet.com/create-set','_blank')">
+        Открыть Quizlet →
+      </button>
+    </div>
+  </div>
+</div>
+  <script>
+const API_URL = "https://misty-mud-2089.khansvyarova.workers.dev";
+const VERBS = ["être","avoir","aller","faire","vouloir","pouvoir","devoir","savoir","venir","prendre","mettre","partir","sortir","voir","dire","lire","écrire","boire","recevoir","ouvrir","suivre","vivre","croire","connaître","tenir"];
+const ALL_TENSES = ["présent","passé composé","imparfait","futur simple"];
+const ALL_TOPICS = ["Travail et vie professionnelle","Immigration et vie à l'étranger","Ville, logement et mobilité","Enfants, éducation et famille","Santé et bien-être","Loisirs, culture et alimentation","Environnement et écologie","Technologie et numérique","Relations sociales et modes de vie","Société et solidarité"];
+
+const SYSTEM_EXERCISES = `Tu es un expert en didactique du FLE et en préparation au TCF Canada. Tu crées des exercices de traduction russe → français pour pratiquer les verbes irréguliers. RÈGLES : "russian" : phrase naturelle en russe; "french" : traduction française correcte B1-B2; "verb_highlighted" : identique à "french" mais le verbe conjugué entre **double astérisques**; "hint" : règle grammaticale courte EN RUSSE. JSON UNIQUEMENT. FORMAT : [{"verb":"aller","tense":"passé composé","topic":"Immigration et vie à l'étranger","russian":"В прошлом году Мари переехала в Канаду.","french":"L'année dernière, Marie est allée au Canada.","verb_highlighted":"L'année dernière, Marie **est allée** au Canada.","hint":"aller → être в passé composé; женский род → allée"}]`;
+
+const SYSTEM_TRANSLATE = `Tu es un traducteur. Traduis le fragment français donné en russe de façon naturelle et concise. Réponds UNIQUEMENT avec la traduction russe, rien d'autre.`;
+
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const hlVerb = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<strong style="color:#1e40af;background:#dbeafe;padding:1px 5px;border-radius:4px">$1</strong>');
+const norm = s => s.trim().toLowerCase().replace(/['']/g,"'").replace(/\s+/g," ").replace(/[.,!?;:«»]/g,"");
+
+async function callAPI(system, userMsg, maxTokens = 6000) {
+  const r = await fetch(API_URL, {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: maxTokens,
+      system,
+      messages: [{role:"user", content: userMsg}]
+    })
   });
-  if(!r.ok){const txt=await r.text().catch(()=>"");throw new Error("API "+r.status+(txt?" — "+txt.slice(0,120):""));}
-  const d=await r.json();
-  return extractJSON(d.content.map(b=>b.text||"").join(""));
+  if (!r.ok) {
+    const t = await r.text().catch(()=>"");
+    throw new Error("API " + r.status + (t ? " — " + t.slice(0,120) : ""));
+  }
+  const d = await r.json();
+  return d.content.map(b => b.text || "").join("");
 }
-let DATA=[],revealed=0;
-const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
-const hlVerb=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<strong style="color:#1e40af;background:#dbeafe;padding:1px 5px;border-radius:4px">$1</strong>');
-async function generate(){
-  const topic=document.getElementById("sel-topic").value;
-  const tense=document.getElementById("sel-tense").value;
-  const verb=document.getElementById("sel-verb").value;
-  const btn=document.getElementById("btn-gen");
-  btn.disabled=true;
-  btn.innerHTML='<span class="spinner" style="width:14px;height:14px;border-width:2px"></span> Генерация…';
-  document.getElementById("content").innerHTML='<div class="loading-inline"><div class="spinner"></div>Генерирую упражнения — обычно 10–15 секунд…</div>';
-  try{
-    DATA=await callAPI(topic,tense,verb);shuffle(DATA);revealed=0;renderAll();
-  }catch(e){
-    document.getElementById("content").innerHTML='<div class="error-msg">Ошибка: '+esc(String(e))+'. Попробуйте ещё раз.</div>';
-  }finally{
-    btn.disabled=false;
-    btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Сгенерировать заново';
+
+function extractJSON(raw) {
+  let t = raw.replace(/```json\s*/gi,"").replace(/```\s*/g,"").trim();
+  const s = t.indexOf("["), e = t.lastIndexOf("]");
+  if (s < 0 || e < 0) throw new Error("No JSON array");
+  return JSON.parse(t.slice(s, e+1).replace(/,\s*([}\]])/g,"$1"));
+}
+
+let vocab = [];
+try { vocab = JSON.parse(localStorage.getItem("tcf_vocab") || "[]"); } catch(e) { vocab = []; }
+const saveVocabStorage = () => { try { localStorage.setItem("tcf_vocab", JSON.stringify(vocab)); } catch(e) {} };
+const isInVocab = fr => vocab.some(v => v.fr === fr);
+const updateVocabCount = () => {
+  const n = vocab.length;
+  document.getElementById("vocab-count").textContent = n;
+  const hc = document.getElementById("vocab-header-count");
+  if (hc) hc.textContent = n + " выражений сохранено";
+};
+updateVocabCount();
+
+function addToVocabFinal(fr, ru) {
+  if (!fr.trim()) return;
+  if (!isInVocab(fr)) { vocab.push({fr: fr.trim(), ru: ru.trim(), id: Date.now()}); saveVocabStorage(); updateVocabCount(); }
+}
+function removeFromVocab(id) { vocab = vocab.filter(v => v.id !== id); saveVocabStorage(); updateVocabCount(); }
+function clearVocab() { if (confirm("Удалить все сохранённые выражения?")) { vocab = []; saveVocabStorage(); updateVocabCount(); renderVocab(); } }
+    let selectedText = "";
+const popup = document.getElementById("sel-popup");
+
+document.addEventListener("mouseup", e => {
+  if (e.target.closest(".modal-box") || e.target.closest(".selection-popup")) return;
+  const sel = window.getSelection();
+  const text = sel ? sel.toString().trim() : "";
+  if (text.length > 1 && sel.anchorNode && sel.anchorNode.parentElement && sel.anchorNode.parentElement.closest(".answer-block")) {
+    selectedText = text;
+    popup.style.display = "flex";
+    const r = sel.getRangeAt(0).getBoundingClientRect();
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    popup.style.top = (r.bottom + scrollY + 8) + "px";
+    popup.style.left = Math.max(8, r.left + r.width/2 - popup.offsetWidth/2) + "px";
+  } else {
+    if (e.target !== popup && !popup.contains(e.target)) {
+      popup.style.display = "none";
+      selectedText = "";
+    }
+  }
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    popup.style.display = "none";
+    selectedText = "";
+    document.getElementById("save-modal").classList.remove("show");
+    document.getElementById("export-modal").classList.remove("show");
+  }
+});
+
+async function openSaveModal() {
+  popup.style.display = "none";
+  const fr = selectedText;
+  if (!fr) return;
+  document.getElementById("save-fr").value = fr;
+  document.getElementById("save-ru").value = "";
+  document.getElementById("save-loading").style.display = "flex";
+  document.getElementById("save-modal").classList.add("show");
+  window.getSelection()?.removeAllRanges();
+  try {
+    const translation = await callAPI(SYSTEM_TRANSLATE, `Traduis en russe : "${fr}"`, 200);
+    document.getElementById("save-ru").value = translation.trim();
+  } catch(e) {
+    document.getElementById("save-ru").placeholder = "Введите перевод вручную";
+  } finally {
+    document.getElementById("save-loading").style.display = "none";
   }
 }
-function renderAll(){
-  document.getElementById("content").innerHTML='<div class="toolbar"><button class="shuffle-btn" onclick="doShuffle()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg> Перемешать</button><span class="count-badge">'+DATA.length+' упражнений · <span id="ct-rev">0</span> открыто</span></div><div class="cards" id="cards"></div>';
+
+function closeSaveModal(e) {
+  if (e.target === document.getElementById("save-modal")) document.getElementById("save-modal").classList.remove("show");
+}
+
+function confirmSave() {
+  const fr = document.getElementById("save-fr").value;
+  const ru = document.getElementById("save-ru").value;
+  if (!fr.trim()) return;
+  addToVocabFinal(fr, ru);
+  document.getElementById("save-modal").classList.remove("show");
+  showToast("Сохранено в словарь ✓");
+}
+
+function showToast(msg) {
+  let t = document.getElementById("toast");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "toast";
+    t.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;z-index:400;opacity:0;transition:opacity .2s";
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = "1";
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = "0"; }, 2000);
+}
+
+function toggleSaveCard(i) {
+  const d = DATA[i];
+  if (!d) return;
+  if (isInVocab(d.french)) {
+    vocab = vocab.filter(v => v.fr !== d.french);
+    saveVocabStorage();
+    updateVocabCount();
+    refreshSaveBtn(i, false);
+  } else {
+    addToVocabFinal(d.french, d.russian);
+    refreshSaveBtn(i, true);
+    showToast("Вся фраза сохранена ✓");
+  }
+}
+
+function refreshSaveBtn(i, saved) {
+  const btn = document.getElementById("savebtn-"+i);
+  if (!btn) return;
+  btn.className = "btn-save" + (saved ? " saved" : "");
+  btn.title = saved ? "Удалить из словаря" : "Сохранить всю фразу";
+  btn.querySelector("svg").setAttribute("fill", saved ? "currentColor" : "none");
+}
+
+function buildPrompt(topic, tense, verb) {
+  const topics = topic === "all" ? ALL_TOPICS.sort(()=>Math.random()-.5).slice(0,3).join(", ") : topic;
+  const tenses = tense === "all" ? ALL_TENSES.join(", ") : tense;
+  const verbLine = (!verb || verb === "all")
+    ? "Verbes irréguliers à varier : " + VERBS.join(", ")
+    : 'RÈGLE ABSOLUE: toutes les 30 phrases utilisent UNIQUEMENT le verbe "' + verb + '". Le champ "verb" doit toujours valoir "' + verb + '". Aucun autre verbe conjugué.';
+  return "Génère exactement 30 exercices de traduction russe→français.\nTemps : " + tenses + "\nTopics TCF : " + topics + "\n" + verbLine + "\nVarie les sujets grammaticaux. Niveau B1-B2.\nRetourne UNIQUEMENT le tableau JSON (30 objets). Rien d'autre.";
+}
+
+let DATA = [], revealed = 0;
+
+async function generate() {
+  const topic = document.getElementById("sel-topic").value;
+  const tense = document.getElementById("sel-tense").value;
+  const verb = document.getElementById("sel-verb").value;
+  const btn = document.getElementById("btn-gen");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="width:13px;height:13px;border-width:2px"></span> Генерация…';
+  document.getElementById("content").innerHTML = '<div class="loading-inline"><div class="spinner"></div>Генерирую упражнения — обычно 10–15 секунд…</div>';
+  try {
+    const raw = await callAPI(SYSTEM_EXERCISES, buildPrompt(topic, tense, verb));
+    DATA = extractJSON(raw);
+    shuffle(DATA);
+    revealed = 0;
+    renderAll();
+  } catch(e) {
+    document.getElementById("content").innerHTML = '<div class="error-msg">Ошибка: ' + esc(String(e)) + '. Попробуйте ещё раз.</div>';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Сгенерировать заново';
+  }
+}
+
+function renderAll() {
+  document.getElementById("content").innerHTML =
+    '<div class="toolbar">' +
+    '<button class="btn-outline" onclick="doShuffle()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg> Перемешать</button>' +
+    '<span class="count-badge">' + DATA.length + ' упражнений · <span id="ct-rev">0</span> открыто</span>' +
+    '</div><div class="cards" id="cards"></div>';
   renderCards();
 }
-function renderCards(){
-  const c=document.getElementById("cards");if(!c)return;c.innerHTML="";
-  DATA.forEach((d,i)=>{
-    const el=document.createElement("div");el.className="card";
-    el.innerHTML='<div class="card-badges"><span class="badge b-verb">'+esc(d.verb)+'</span><span class="badge b-tense">'+esc(d.tense)+'</span><span class="badge b-topic">'+esc(d.topic)+'</span></div><div class="ru-sentence">'+esc(d.russian)+'</div><div class="ru-hint">Переведите на французский · глагол: <em>'+esc(d.verb)+'</em> · '+esc(d.tense)+'</div><input type="text" class="translation-input" id="inp-'+i+'" placeholder="Votre traduction en français…" autocomplete="off" onkeydown="if(event.key===\'Enter\')check('+i+')"><div class="card-actions"><button class="btn-check" onclick="check('+i+')">Проверить</button><button class="btn-reveal" onclick="reveal('+i+')">Показать ответ</button><span class="feedback" id="fb-'+i+'"></span></div><div class="answer-block" id="ans-'+i+'"><div class="answer-fr">'+hlVerb(d.verb_highlighted||d.french)+'</div><div class="answer-note">'+esc(d.hint)+'</div></div>';
+
+function renderCards() {
+  const c = document.getElementById("cards");
+  if (!c) return;
+  c.innerHTML = "";
+  DATA.forEach((d, i) => {
+    const saved = isInVocab(d.french);
+    const el = document.createElement("div");
+    el.className = "card";
+    el.id = "card-" + i;
+    el.innerHTML = `
+      <button class="btn-save${saved?" saved":""}" id="savebtn-${i}" onclick="toggleSaveCard(${i})" title="${saved?"Удалить из словаря":"Сохранить всю фразу"}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="${saved?"currentColor":"none"}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+      </button>
+      <div class="card-badges">
+        <span class="badge b-verb">${esc(d.verb)}</span>
+        <span class="badge b-tense">${esc(d.tense)}</span>
+        <span class="badge b-topic">${esc(d.topic)}</span>
+      </div>
+      <div class="ru-sentence">${esc(d.russian)}</div>
+      <div class="ru-hint">Переведите на французский · глагол: <em>${esc(d.verb)}</em> · ${esc(d.tense)}</div>
+      <input type="text" class="translation-input" id="inp-${i}" placeholder="Votre traduction en français…" autocomplete="off" onkeydown="if(event.key==='Enter')check(${i})">
+      <div class="card-actions">
+        <button class="btn-check" onclick="check(${i})">Проверить</button>
+        <button class="btn-reveal" onclick="reveal(${i})">Показать ответ</button>
+        <span class="feedback" id="fb-${i}"></span>
+      </div>
+      <div class="answer-block" id="ans-${i}">
+        <div class="answer-fr">${hlVerb(d.verb_highlighted || d.french)}</div>
+        <div class="answer-note">${esc(d.hint)}</div>
+        <div class="select-hint">✏️ Выделите любое выражение мышью, чтобы сохранить его в словарь</div>
+      </div>`;
     c.appendChild(el);
   });
 }
-function norm(s){return s.trim().toLowerCase().replace(/['']/g,"'").replace(/\s+/g," ").replace(/[.,!?;:«»]/g,"");}
-function getVerb(h){const m=(h||"").match(/\*\*(.+?)\*\*/);return m?norm(m[1]):"";}
-function userHasVerb(input,verbForm){
-  if(!verbForm)return false;
-  const words=norm(input).split(" ");const vwords=verbForm.split(" ");
-  for(let i=0;i<=words.length-vwords.length;i++){if(vwords.every((w,j)=>w===words[i+j]))return true;}
+
+function getVerb(h) { const m = (h||"").match(/\*\*(.+?)\*\*/); return m ? norm(m[1]) : ""; }
+function userHasVerb(input, verbForm) {
+  if (!verbForm) return false;
+  const words = norm(input).split(" ");
+  const vwords = verbForm.split(" ");
+  for (let i = 0; i <= words.length - vwords.length; i++) {
+    if (vwords.every((w,j) => w === words[i+j])) return true;
+  }
   return false;
 }
-function check(i){
-  const inp=document.getElementById("inp-"+i);const fb=document.getElementById("fb-"+i);
-  if(!inp||!DATA[i])return;
-  const correctVerb=getVerb(DATA[i].verb_highlighted||DATA[i].french);
-  if(userHasVerb(inp.value,correctVerb)){
-    inp.className="translation-input correct";fb.className="feedback ok";fb.textContent="✓ Верно!";
-    document.getElementById("ans-"+i).className="answer-block show";revealed++;updCount();
-  }else{inp.className="translation-input wrong";fb.className="feedback ko";fb.textContent="✗ Глагол неверен — попробуйте ещё";}
+function check(i) {
+  const inp = document.getElementById("inp-"+i);
+  const fb = document.getElementById("fb-"+i);
+  if (!inp || !DATA[i]) return;
+  const correctVerb = getVerb(DATA[i].verb_highlighted || DATA[i].french);
+  if (userHasVerb(inp.value, correctVerb)) {
+    inp.className = "translation-input correct"; fb.className = "feedback ok"; fb.textContent = "✓ Верно!";
+    document.getElementById("ans-"+i).className = "answer-block show";
+    revealed++; updCount();
+  } else {
+    inp.className = "translation-input wrong"; fb.className = "feedback ko"; fb.textContent = "✗ Глагол неверен — попробуйте ещё";
+  }
 }
-function reveal(i){
-  document.getElementById("ans-"+i).className="answer-block show";
-  const inp=document.getElementById("inp-"+i);
-  if(inp&&!inp.value.trim())inp.value=DATA[i].french;
-  revealed++;updCount();
+function reveal(i) {
+  document.getElementById("ans-"+i).className = "answer-block show";
+  const inp = document.getElementById("inp-"+i);
+  if (inp && !inp.value.trim()) inp.value = DATA[i].french;
+  revealed++; updCount();
 }
-function updCount(){const el=document.getElementById("ct-rev");if(el)el.textContent=revealed;}
-function doShuffle(){shuffle(DATA);revealed=0;renderCards();updCount();}
+function updCount() { const el = document.getElementById("ct-rev"); if (el) el.textContent = revealed; }
+function doShuffle() { shuffle(DATA); revealed = 0; renderCards(); updCount(); }
+    function renderVocab() {
+  const list = document.getElementById("vocab-list");
+  if (!vocab.length) {
+    list.innerHTML = '<div class="empty-state">Выделите текст в ответе карточки, чтобы сохранить выражение</div>';
+    return;
+  }
+  list.innerHTML = "";
+  vocab.forEach(v => {
+    const el = document.createElement("div");
+    el.className = "vocab-item";
+    el.innerHTML = `<div class="vocab-text"><div class="vocab-fr">${esc(v.fr)}</div><div class="vocab-ru">${esc(v.ru)}</div></div><button class="btn-del" onclick="delVocab(${v.id})" title="Удалить">×</button>`;
+    list.appendChild(el);
+  });
+}
+
+function delVocab(id) { removeFromVocab(id); renderVocab(); }
+
+function openExportModal() {
+  if (!vocab.length) { alert("Словарь пуст — сначала сохраните выражения"); return; }
+  document.getElementById("export-text").value = vocab.map(v => v.fr + "\t" + v.ru).join("\n");
+  document.getElementById("export-modal").classList.add("show");
+}
+function closeExportModal(e) {
+  if (e.target === document.getElementById("export-modal")) document.getElementById("export-modal").classList.remove("show");
+}
+function copyExport() {
+  const ta = document.getElementById("export-text");
+  ta.select();
+  document.execCommand("copy");
+  showToast("Скопировано ✓");
+}
+
+let fcList = [], fcIdx = 0, fcKnow = 0, fcSkip = 0, fcChecked = false;
+
+function startFlash() {
+  if (!vocab.length) {
+    document.getElementById("flash-content").innerHTML = '<div class="empty-state">Сначала сохраните несколько выражений в словарь</div>';
+    return;
+  }
+  fcList = shuffle([...vocab]);
+  fcIdx = 0; fcKnow = 0; fcSkip = 0; fcChecked = false;
+  renderFlash();
+}
+
+function renderFlash() {
+  const fc = document.getElementById("flash-content");
+  if (fcIdx >= fcList.length) {
+    fc.innerHTML = `
+      <div class="fc-container">
+        <div class="fc-done">
+          <div style="font-size:40px;margin-bottom:12px">🎉</div>
+          <div class="fc-done-title">Готово!</div>
+          <div class="fc-done-sub">Написали правильно: ${fcKnow} из ${fcList.length}<br>Повторить: ${fcSkip}</div>
+          <button class="btn-primary" onclick="startFlash()">Начать заново</button>
+          ${fcSkip > 0 ? '<button class="btn-outline" style="margin-top:10px" onclick="startFlash()">Повторить ошибки</button>' : ''}
+        </div>
+      </div>`;
+    return;
+  }
+  const item = fcList[fcIdx];
+  const prog = Math.round((fcIdx / fcList.length) * 100);
+  fc.innerHTML = `
+    <div class="fc-container">
+      <div class="fc-progress"><div class="fc-progress-bar" style="width:${prog}%"></div></div>
+      <div class="fc-card">
+        <div class="fc-side-label">Переведите на французский</div>
+        <div class="fc-text">${esc(item.ru)}</div>
+        <div class="fc-input-area">
+          <input class="fc-type-input" id="fc-inp" type="text" placeholder="Напишите по-французски…" autocomplete="off" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')fcCheck()">
+          <div class="fc-result" id="fc-result"></div>
+        </div>
+      </div>
+      <div id="fc-actions-area">
+        <button class="fc-check-btn" onclick="fcCheck()">Проверить</button>
+      </div>
+      <div class="fc-stats">
+        <span class="fc-stat"><span class="dot-know"></span> ${fcKnow} верно</span>
+        <span class="fc-stat"><span class="dot-skip"></span> ${fcSkip} ошибок</span>
+        <span style="color:#aaa">${fcIdx + 1} / ${fcList.length}</span>
+      </div>
+    </div>`;
+  document.getElementById("fc-inp").focus();
+}
+
+function fcCheck() {
+  if (fcChecked) return;
+  const inp = document.getElementById("fc-inp");
+  if (!inp || !inp.value.trim()) return;
+  const item = fcList[fcIdx];
+  const userVal = norm(inp.value);
+  const correct = norm(item.fr);
+  const isOk = userVal === correct || (correct.includes(userVal) && userVal.length > correct.length * 0.7);
+  fcChecked = true;
+  const result = document.getElementById("fc-result");
+  if (isOk) {
+    inp.className = "fc-type-input fc-correct";
+    result.className = "fc-result ok show";
+    result.innerHTML = "✓ Верно!";
+    fcKnow++;
+  } else {
+    inp.className = "fc-type-input fc-wrong";
+    result.className = "fc-result ko show";
+    result.innerHTML = `✗ Правильный ответ:<div class="fc-correct-answer">${esc(item.fr)}</div>`;
+    fcSkip++;
+  }
+  document.getElementById("fc-actions-area").innerHTML =
+    `<div class="fc-actions">
+      <button class="btn-fc-skip" onclick="fcNext(false)">Повторить позже</button>
+      <button class="btn-fc-know" onclick="fcNext(true)">Дальше →</button>
+    </div>`;
+}
+
+function fcNext(know) {
+  if (!know) {
+    const pos = fcIdx + 2 + Math.floor(Math.random() * 3);
+    fcList.splice(Math.min(pos, fcList.length), 0, fcList[fcIdx]);
+  }
+  fcIdx++;
+  fcChecked = false;
+  renderFlash();
+}
+    function switchTab(name, btn) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("pane-practice").style.display = name === "practice" ? "" : "none";
+  document.getElementById("pane-vocab").style.display = name === "vocab" ? "" : "none";
+  document.getElementById("pane-flash").style.display = name === "flash" ? "" : "none";
+  if (name === "vocab") renderVocab();
+  if (name === "flash") startFlash();
+}
 </script>
 </body>
 </html>
