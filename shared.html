@@ -112,6 +112,19 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 .spinner{width:22px;height:22px;border:2px solid #e5e3db;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 .spinner-sm{width:14px;height:14px;border:2px solid #e5e3db;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
+  .chat-block{margin-top:10px;display:none}
+.chat-block.show{display:block}
+.chat-messages{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+.chat-msg{font-size:13px;line-height:1.6;padding:8px 12px;border-radius:8px;max-width:90%}
+.chat-msg.user{background:#1a1a1a;color:#fff;align-self:flex-end}
+.chat-msg.assistant{background:#f0f9ff;color:#1a1a1a;border-left:3px solid #93c5fd;align-self:flex-start}
+.chat-input-row{display:flex;gap:8px}
+.chat-input{flex:1;font-size:13px;padding:8px 12px;border-radius:8px;border:1px solid #d0cfc7;background:#f9f8f5;color:#1a1a1a;outline:none;font-family:inherit}
+.chat-input:focus{border-color:#6b7280;background:#fff}
+.btn-chat-send{padding:8px 14px;border-radius:8px;border:none;background:#1a1a1a;color:#fff;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.btn-chat-send:disabled{opacity:.4;cursor:not-allowed}
+.btn-ask{margin-top:8px;padding:5px 12px;border-radius:7px;border:1px solid #d0cfc7;background:#fff;cursor:pointer;font-size:12px;color:#666;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+.btn-ask:hover{background:#f0efeb}
 .error-msg{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:14px 16px;color:#991b1b;font-size:13px}
 .empty-state{text-align:center;padding:3rem;color:#aaa;font-size:14px}
 </style>
@@ -475,7 +488,15 @@ function renderCards() {
       <div class="answer-block" id="ans-${i}">
         <div class="answer-fr">${hlVerb(d.verb_highlighted || d.french)}</div>
         <div class="answer-note">${esc(d.hint)}</div>
-        <div class="select-hint">✏️ Выделите любое выражение мышью</div>
+       <div class="select-hint">✏️ Выделите любое выражение мышью</div>
+        <button class="btn-ask" onclick="toggleChat(${i})">💬 Задать вопрос по этой карточке</button>
+        <div class="chat-block" id="chat-${i}">
+          <div class="chat-messages" id="chat-msgs-${i}"></div>
+          <div class="chat-input-row">
+            <input class="chat-input" id="chat-inp-${i}" placeholder="Например: почему здесь à, а не au?" onkeydown="if(event.key==='Enter')sendChat(${i})">
+            <button class="btn-chat-send" id="chat-btn-${i}" onclick="sendChat(${i})">Спросить</button>
+          </div>
+        </div>
 <button class="btn-save-selection" id="selbtn-${i}" onclick="openSaveModal()">
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
   Сохранить выделенное
@@ -635,6 +656,49 @@ function fcNext(know) {
   fcIdx++;
   fcChecked = false;
   renderFlash();
+}
+   const SYSTEM_CHAT = `Tu es un professeur de FLE qui aide un étudiant russophone à préparer le TCF Canada. Réponds en russe, de façon courte et claire (3-5 phrases max). Explique uniquement ce qui est demandé.`;
+
+function toggleChat(i) {
+  const block = document.getElementById("chat-"+i);
+  if (!block) return;
+  const isOpen = block.classList.contains("show");
+  block.classList.toggle("show", !isOpen);
+  if (!isOpen) document.getElementById("chat-inp-"+i).focus();
+}
+
+async function sendChat(i) {
+  const inp = document.getElementById("chat-inp-"+i);
+  const btn = document.getElementById("chat-btn-"+i);
+  const msgs = document.getElementById("chat-msgs-"+i);
+  const question = inp.value.trim();
+  if (!question || !DATA[i]) return;
+
+  const d = DATA[i];
+  const context = `Карточка: "${d.russian}" → "${d.french}" (глагол: ${d.verb}, время: ${d.tense}, тема: ${d.topic})`;
+
+  const userDiv = document.createElement("div");
+  userDiv.className = "chat-msg user";
+  userDiv.textContent = question;
+  msgs.appendChild(userDiv);
+  inp.value = "";
+  btn.disabled = true;
+
+  const loadingDiv = document.createElement("div");
+  loadingDiv.className = "chat-msg assistant";
+  loadingDiv.textContent = "…";
+  msgs.appendChild(loadingDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const answer = await callAPI(SYSTEM_CHAT, `${context}\n\nВопрос студента: ${question}`, 500);
+    loadingDiv.textContent = answer.trim();
+  } catch(e) {
+    loadingDiv.textContent = "Ошибка, попробуй ещё раз";
+  } finally {
+    btn.disabled = false;
+    msgs.scrollTop = msgs.scrollHeight;
+  }
 }
     function switchTab(name, btn) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
