@@ -51,11 +51,13 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 .answer-note{font-size:12px;color:#666;font-style:italic}
 .select-hint{font-size:11px;color:#93c5fd;margin-top:6px;display:none}
 .answer-block.show .select-hint{display:block}
+.btn-save-selection{display:none;margin-top:8px;padding:6px 14px;border-radius:7px;border:1px solid #93c5fd;background:#f0f9ff;color:#1e40af;font-size:12px;cursor:pointer;font-family:inherit;align-items:center;gap:6px}
+.btn-save-selection.visible{display:inline-flex}
+.btn-save-selection:hover{background:#dbeafe}
 .btn-save{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;border:1px solid #d0cfc7;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:#aaa}
 .btn-save:hover{background:#dbeafe;border-color:#93c5fd;color:#1e40af}
 .btn-save.saved{background:#d1fae5;border-color:#6ee7b7;color:#065f46}
-.selection-popup{position:fixed;background:#1a1a1a;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap;z-index:200;display:none;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-.selection-popup:hover{background:#333}
+
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:300;padding:1rem}
 .modal-overlay.show{display:flex}
 .modal-box{background:#fff;border-radius:14px;padding:24px;max-width:440px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
@@ -193,11 +195,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
   <div id="flash-content"></div>
 </div>
 
-<!-- Selection popup -->
-<div class="selection-popup" id="sel-popup" onclick="openSaveModal()">
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-  Сохранить в словарь
-</div>
+
 
 <!-- Save confirmation modal -->
 <div class="modal-overlay" id="save-modal" onclick="closeSaveModal(event)">
@@ -302,21 +300,28 @@ function clearVocab() { if (confirm("Удалить все сохранённы�
     let selectedText = "";
 const popup = document.getElementById("sel-popup");
 
+let selectedText = "";
+let activeSelBtn = null;
+
 document.addEventListener("mouseup", e => {
-  if (e.target.closest(".modal-box") || e.target.closest(".selection-popup")) return;
+  if (e.target.closest(".modal-box")) return;
   const sel = window.getSelection();
   const text = sel ? sel.toString().trim() : "";
+
   if (text.length > 1 && sel.anchorNode && sel.anchorNode.parentElement && sel.anchorNode.parentElement.closest(".answer-block")) {
     selectedText = text;
-    popup.style.display = "flex";
-    const r = sel.getRangeAt(0).getBoundingClientRect();
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
-    popup.style.top = (r.bottom + scrollY + 8) + "px";
-    popup.style.left = Math.max(8, r.left + r.width/2 - popup.offsetWidth/2) + "px";
+    // Найти кнопку внутри того же answer-block
+    const answerBlock = sel.anchorNode.parentElement.closest(".answer-block");
+    const btn = answerBlock ? answerBlock.querySelector(".btn-save-selection") : null;
+    // Скрыть предыдущую если была другая
+    if (activeSelBtn && activeSelBtn !== btn) activeSelBtn.classList.remove("visible");
+    activeSelBtn = btn;
+    if (btn) btn.classList.add("visible");
   } else {
-    if (e.target !== popup && !popup.contains(e.target)) {
-      popup.style.display = "none";
+    if (!e.target.closest(".btn-save-selection") && !e.target.closest(".modal-box")) {
+      if (activeSelBtn) activeSelBtn.classList.remove("visible");
       selectedText = "";
+      activeSelBtn = null;
     }
   }
 });
@@ -470,8 +475,11 @@ function renderCards() {
       <div class="answer-block" id="ans-${i}">
         <div class="answer-fr">${hlVerb(d.verb_highlighted || d.french)}</div>
         <div class="answer-note">${esc(d.hint)}</div>
-        <div class="select-hint">✏️ Выделите любое выражение мышью, чтобы сохранить его в словарь</div>
-      </div>`;
+        <div class="select-hint">✏️ Выделите любое выражение мышью</div>
+<button class="btn-save-selection" id="selbtn-${i}" onclick="openSaveModal()">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+  Сохранить выделенное
+</button>`;
     c.appendChild(el);
   });
 }
