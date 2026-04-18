@@ -336,7 +336,7 @@ document.addEventListener("keydown", e => {
 });
 
 async function openSaveModal() {
-  popup.style.display = "none";
+  if (activeSelBtn) activeSelBtn.classList.remove("visible");
   const fr = selectedText;
   if (!fr) return;
   document.getElementById("save-fr").value = fr;
