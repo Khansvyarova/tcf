@@ -23,6 +23,20 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 .btn-primary:disabled{opacity:.4;cursor:not-allowed}
 .btn-outline{padding:7px 14px;border-radius:8px;border:1px solid #d0cfc7;background:#fff;cursor:pointer;font-size:12px;color:#1a1a1a;display:inline-flex;align-items:center;gap:6px;transition:background .12s;font-family:inherit}
 .btn-outline:hover{background:#f0efeb}
+ 
+/* Level pills */
+.level-group{display:flex;flex-direction:column;gap:4px}
+.level-pills{display:flex;gap:4px}
+.level-pill{padding:6px 13px;border-radius:20px;border:1.5px solid #d0cfc7;background:#f9f8f5;font-size:12px;font-weight:600;cursor:pointer;color:#666;font-family:inherit;transition:all .15s;letter-spacing:.03em}
+.level-pill:hover{border-color:#aaa;color:#333}
+.level-pill.active-B1{background:#fef9c3;border-color:#ca8a04;color:#854d0e}
+.level-pill.active-B2{background:#dbeafe;border-color:#2563eb;color:#1e3a8a}
+.level-pill.active-C1{background:#f3e8ff;border-color:#9333ea;color:#581c87}
+/* level badge on card */
+.b-level-B1{background:#fef9c3;color:#854d0e}
+.b-level-B2{background:#dbeafe;color:#1e3a8a}
+.b-level-C1{background:#f3e8ff;color:#581c87}
+ 
 .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap}
 .count-badge{font-size:12px;color:#888}
 .cards{display:flex;flex-direction:column;gap:10px}
@@ -57,7 +71,6 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 .btn-save{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:8px;border:1px solid #d0cfc7;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:#aaa}
 .btn-save:hover{background:#dbeafe;border-color:#93c5fd;color:#1e40af}
 .btn-save.saved{background:#d1fae5;border-color:#6ee7b7;color:#065f46}
-
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:300;padding:1rem}
 .modal-overlay.show{display:flex}
 .modal-box{background:#fff;border-radius:14px;padding:24px;max-width:440px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
@@ -112,7 +125,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 .spinner{width:22px;height:22px;border:2px solid #e5e3db;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 .spinner-sm{width:14px;height:14px;border:2px solid #e5e3db;border-top-color:#888;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
-  .chat-block{margin-top:10px;display:none}
+.chat-block{margin-top:10px;display:none}
 .chat-block.show{display:block}
 .chat-messages{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
 .chat-msg{font-size:13px;line-height:1.6;padding:8px 12px;border-radius:8px;max-width:90%}
@@ -130,7 +143,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
 </style>
 </head><body>
 <h1>TCF Canada — Практика + Словарь</h1>
-
+ 
 <div class="tabs">
   <button class="tab active" onclick="switchTab('practice',this)">Упражнения</button>
   <button class="tab" onclick="switchTab('vocab',this)">
@@ -138,7 +151,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
   </button>
   <button class="tab" onclick="switchTab('flash',this)">Flashcards</button>
 </div>
-
+ 
 <!-- PRACTICE TAB -->
 <div id="pane-practice">
   <div class="gen-panel">
@@ -177,6 +190,17 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
           <option>imparfait</option><option>futur simple</option>
         </select>
       </div>
+ 
+      <!-- LEVEL PILLS — новый элемент -->
+      <div class="level-group">
+        <span class="gen-label">Уровень лексики</span>
+        <div class="level-pills" id="level-pills">
+          <button class="level-pill active-B1" data-level="B1" onclick="setLevel('B1')">B1</button>
+          <button class="level-pill" data-level="B2" onclick="setLevel('B2')">B2</button>
+          <button class="level-pill" data-level="C1" onclick="setLevel('C1')">C1</button>
+        </div>
+      </div>
+ 
       <button class="btn-primary" id="btn-gen" onclick="generate()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
         Сгенерировать 30 упражнений
@@ -185,7 +209,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
   </div>
   <div id="content"><div class="empty-state">Выберите тему и нажмите «Сгенерировать»</div></div>
 </div>
-
+ 
 <!-- VOCAB TAB -->
 <div id="pane-vocab" style="display:none">
   <div class="vocab-header">
@@ -202,14 +226,12 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
     <div class="empty-state">Выделите текст в ответе карточки, чтобы сохранить выражение</div>
   </div>
 </div>
-
+ 
 <!-- FLASHCARDS TAB -->
 <div id="pane-flash" style="display:none">
   <div id="flash-content"></div>
 </div>
-
-
-
+ 
 <!-- Save confirmation modal -->
 <div class="modal-overlay" id="save-modal" onclick="closeSaveModal(event)">
   <div class="modal-box">
@@ -232,7 +254,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
     </div>
   </div>
 </div>
-
+ 
 <!-- Export modal -->
 <div class="modal-overlay" id="export-modal" onclick="closeExportModal(event)">
   <div class="modal-box">
@@ -251,21 +273,57 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
     </div>
   </div>
 </div>
-  <script>
+ 
+<script>
 const API_URL = "https://misty-mud-2089.khansvyarova.workers.dev";
 const VERBS = ["être","avoir","aller","faire","vouloir","pouvoir","devoir","savoir","venir","prendre","mettre","partir","sortir","voir","dire","lire","écrire","boire","recevoir","ouvrir","suivre","vivre","croire","connaître","tenir"];
 const ALL_TENSES = ["présent","passé composé","imparfait","futur simple"];
 const ALL_TOPICS = ["Travail et vie professionnelle","Immigration et vie à l'étranger","Ville, logement et mobilité","Enfants, éducation et famille","Santé et bien-être","Loisirs, culture et alimentation","Environnement et écologie","Technologie et numérique","Relations sociales et modes de vie","Société et solidarité"];
-
-const SYSTEM_EXERCISES = `Tu es un expert en didactique du FLE et en préparation au TCF Canada. Tu crées des exercices de traduction russe → français pour pratiquer les verbes irréguliers. RÈGLES : "russian" : phrase naturelle en russe; "french" : traduction française correcte B1-B2; "verb_highlighted" : identique à "french" mais le verbe conjugué entre **double astérisques**; "hint" : règle grammaticale courte EN RUSSE. JSON UNIQUEMENT. FORMAT : [{"verb":"aller","tense":"passé composé","topic":"Immigration et vie à l'étranger","russian":"В прошлом году Мари переехала в Канаду.","french":"L'année dernière, Marie est allée au Canada.","verb_highlighted":"L'année dernière, Marie **est allée** au Canada.","hint":"aller → être в passé composé; женский род → allée"}]`;
-
+ 
+// ── Lexical rubrics per level (TCF/CECRL criteria, lexique only) ──────────────
+const LEVEL_RUBRICS = {
+  B1: {
+    desc: "Vocabulaire courant et concret. Mots du quotidien, verbes de base (habiter, travailler, prendre, aller). Quelques périphrases acceptables pour compenser un manque lexical. Éviter le vocabulaire abstrait, les idiomes et les registres soutenus.",
+    examples: "ex. : « Il habite en banlieue. », « Elle prend le bus aux heures chargées. », « C'est difficile de trouver un appartement en ville. »"
+  },
+  B2: {
+    desc: "Vocabulaire varié et thématique. Premiers idiomes naturels, synonymes précis (se déplacer, résider, effectuer un trajet). Expressions figées courantes (en raison de, avoir du mal à, faire face à). Registre neutre à légèrement soutenu.",
+    examples: "ex. : « Elle réside en banlieue et se déplace quotidiennement en transports en commun. », « En raison des embouteillages, beaucoup préfèrent le télétravail. »"
+  },
+  C1: {
+    desc: "Lexique riche, nuancé et précis. Expressions idiomatiques intégrées naturellement, nominalisations (la densification, les flux pendulaires), registre soutenu, reformulations élégantes. Capacité à exprimer des nuances et des concepts abstraits.",
+    examples: "ex. : « La congestion des axes routiers en heures de pointe contraint de nombreux citadins à reconsidérer leur mode de vie. », « S'établir en périphérie implique des contraintes de mobilité non négligeables. »"
+  }
+};
+ 
 const SYSTEM_TRANSLATE = `Tu es un traducteur. Traduis le fragment français donné en russe de façon naturelle et concise. Réponds UNIQUEMENT avec la traduction russe, rien d'autre.`;
-
+ 
+const SYSTEM_CHAT = `Tu es un professeur de FLE qui aide un étudiant russophone à préparer le TCF Canada. Réponds en russe, de façon courte et claire (3-5 phrases max). Explique uniquement ce qui est demandé.`;
+ 
+function buildSystemExercises(level) {
+  const rubric = LEVEL_RUBRICS[level];
+  return `Tu es un expert en didactique du FLE et en préparation au TCF Canada. Tu crées des exercices de traduction russe → français pour pratiquer les verbes irréguliers.
+ 
+NIVEAU LEXICAL CIBLE : ${level} (critère TCF/CECRL — lexique uniquement)
+${rubric.desc}
+${rubric.examples}
+ 
+RÈGLES JSON :
+"russian" : phrase naturelle en russe
+"french" : traduction française correcte au niveau lexical ${level}
+"verb_highlighted" : identique à "french" mais le verbe conjugué entre **double astérisques**
+"hint" : règle grammaticale courte EN RUSSE
+"level" : "${level}"
+ 
+JSON UNIQUEMENT. FORMAT :
+[{"verb":"aller","tense":"passé composé","topic":"Immigration et vie à l'étranger","level":"${level}","russian":"В прошлом году Мари переехала в Канаду.","french":"L'année dernière, Marie est allée au Canada.","verb_highlighted":"L'année dernière, Marie **est allée** au Canada.","hint":"aller → être в passé composé; женский род → allée"}]`;
+}
+ 
 const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
 const hlVerb = s => esc(s).replace(/\*\*(.+?)\*\*/g,'<strong style="color:#1e40af;background:#dbeafe;padding:1px 5px;border-radius:4px">$1</strong>');
 const norm = s => s.trim().toLowerCase().replace(/['']/g,"'").replace(/\s+/g," ").replace(/[.,!?;:«»]/g,"");
-
+ 
 async function callAPI(system, userMsg, maxTokens = 6000) {
   const r = await fetch(API_URL, {
     method: "POST",
@@ -284,14 +342,25 @@ async function callAPI(system, userMsg, maxTokens = 6000) {
   const d = await r.json();
   return d.content.map(b => b.text || "").join("");
 }
-
+ 
 function extractJSON(raw) {
   let t = raw.replace(/```json\s*/gi,"").replace(/```\s*/g,"").trim();
   const s = t.indexOf("["), e = t.lastIndexOf("]");
   if (s < 0 || e < 0) throw new Error("No JSON array");
   return JSON.parse(t.slice(s, e+1).replace(/,\s*([}\]])/g,"$1"));
 }
-
+ 
+// ── Level state ───────────────────────────────────────────────────────────────
+let currentLevel = "B1";
+ 
+function setLevel(level) {
+  currentLevel = level;
+  document.querySelectorAll(".level-pill").forEach(btn => {
+    btn.className = "level-pill" + (btn.dataset.level === level ? " active-" + level : "");
+  });
+}
+ 
+// ── Vocab ─────────────────────────────────────────────────────────────────────
 let vocab = [];
 try { vocab = JSON.parse(localStorage.getItem("tcf_vocab") || "[]"); } catch(e) { vocab = []; }
 const saveVocabStorage = () => { try { localStorage.setItem("tcf_vocab", JSON.stringify(vocab)); } catch(e) {} };
@@ -303,30 +372,25 @@ const updateVocabCount = () => {
   if (hc) hc.textContent = n + " выражений сохранено";
 };
 updateVocabCount();
-
+ 
 function addToVocabFinal(fr, ru) {
   if (!fr.trim()) return;
   if (!isInVocab(fr)) { vocab.push({fr: fr.trim(), ru: ru.trim(), id: Date.now()}); saveVocabStorage(); updateVocabCount(); }
 }
 function removeFromVocab(id) { vocab = vocab.filter(v => v.id !== id); saveVocabStorage(); updateVocabCount(); }
 function clearVocab() { if (confirm("Удалить все сохранённые выражения?")) { vocab = []; saveVocabStorage(); updateVocabCount(); renderVocab(); } }
-    let selectedText = "";
-const popup = document.getElementById("sel-popup");
-
-
+ 
+let selectedText = "";
 let activeSelBtn = null;
-
+ 
 document.addEventListener("mouseup", e => {
   if (e.target.closest(".modal-box")) return;
   const sel = window.getSelection();
   const text = sel ? sel.toString().trim() : "";
-
   if (text.length > 1 && sel.anchorNode && sel.anchorNode.parentElement && sel.anchorNode.parentElement.closest(".answer-block")) {
     selectedText = text;
-    // Найти кнопку внутри того же answer-block
     const answerBlock = sel.anchorNode.parentElement.closest(".answer-block");
     const btn = answerBlock ? answerBlock.querySelector(".btn-save-selection") : null;
-    // Скрыть предыдущую если была другая
     if (activeSelBtn && activeSelBtn !== btn) activeSelBtn.classList.remove("visible");
     activeSelBtn = btn;
     if (btn) btn.classList.add("visible");
@@ -338,16 +402,15 @@ document.addEventListener("mouseup", e => {
     }
   }
 });
-
+ 
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") {
-    popup.style.display = "none";
     selectedText = "";
     document.getElementById("save-modal").classList.remove("show");
     document.getElementById("export-modal").classList.remove("show");
   }
 });
-
+ 
 async function openSaveModal() {
   if (activeSelBtn) activeSelBtn.classList.remove("visible");
   const fr = selectedText;
@@ -366,11 +429,11 @@ async function openSaveModal() {
     document.getElementById("save-loading").style.display = "none";
   }
 }
-
+ 
 function closeSaveModal(e) {
   if (e.target === document.getElementById("save-modal")) document.getElementById("save-modal").classList.remove("show");
 }
-
+ 
 function confirmSave() {
   const fr = document.getElementById("save-fr").value;
   const ru = document.getElementById("save-ru").value;
@@ -379,7 +442,7 @@ function confirmSave() {
   document.getElementById("save-modal").classList.remove("show");
   showToast("Сохранено в словарь ✓");
 }
-
+ 
 function showToast(msg) {
   let t = document.getElementById("toast");
   if (!t) {
@@ -393,7 +456,7 @@ function showToast(msg) {
   clearTimeout(t._timer);
   t._timer = setTimeout(() => { t.style.opacity = "0"; }, 2000);
 }
-
+ 
 function toggleSaveCard(i) {
   const d = DATA[i];
   if (!d) return;
@@ -408,7 +471,7 @@ function toggleSaveCard(i) {
     showToast("Вся фраза сохранена ✓");
   }
 }
-
+ 
 function refreshSaveBtn(i, saved) {
   const btn = document.getElementById("savebtn-"+i);
   if (!btn) return;
@@ -416,28 +479,29 @@ function refreshSaveBtn(i, saved) {
   btn.title = saved ? "Удалить из словаря" : "Сохранить всю фразу";
   btn.querySelector("svg").setAttribute("fill", saved ? "currentColor" : "none");
 }
-
-function buildPrompt(topic, tense, verb) {
+ 
+function buildPrompt(topic, tense, verb, level) {
   const topics = topic === "all" ? ALL_TOPICS.sort(()=>Math.random()-.5).slice(0,3).join(", ") : topic;
   const tenses = tense === "all" ? ALL_TENSES.join(", ") : tense;
   const verbLine = (!verb || verb === "all")
     ? "Verbes irréguliers à varier : " + VERBS.join(", ")
     : 'RÈGLE ABSOLUE: toutes les 30 phrases utilisent UNIQUEMENT le verbe "' + verb + '". Le champ "verb" doit toujours valoir "' + verb + '". Aucun autre verbe conjugué.';
-  return "Génère exactement 30 exercices de traduction russe→français.\nTemps : " + tenses + "\nTopics TCF : " + topics + "\n" + verbLine + "\nVarie les sujets grammaticaux. Niveau B1-B2.\nRetourne UNIQUEMENT le tableau JSON (30 objets). Rien d'autre.";
+  return "Génère exactement 30 exercices de traduction russe→français.\nTemps : " + tenses + "\nTopics TCF : " + topics + "\n" + verbLine + "\nNiveau lexical : " + level + " (respecte strictement la rubrique du system prompt)\nVarie les sujets grammaticaux.\nRetourne UNIQUEMENT le tableau JSON (30 objets). Rien d'autre.";
 }
-
+ 
 let DATA = [], revealed = 0;
-
+ 
 async function generate() {
   const topic = document.getElementById("sel-topic").value;
   const tense = document.getElementById("sel-tense").value;
   const verb = document.getElementById("sel-verb").value;
+  const level = currentLevel;
   const btn = document.getElementById("btn-gen");
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner" style="width:13px;height:13px;border-width:2px"></span> Генерация…';
   document.getElementById("content").innerHTML = '<div class="loading-inline"><div class="spinner"></div>Генерирую упражнения — обычно 10–15 секунд…</div>';
   try {
-    const raw = await callAPI(SYSTEM_EXERCISES, buildPrompt(topic, tense, verb));
+    const raw = await callAPI(buildSystemExercises(level), buildPrompt(topic, tense, verb, level));
     DATA = extractJSON(raw);
     shuffle(DATA);
     revealed = 0;
@@ -449,7 +513,7 @@ async function generate() {
     btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Сгенерировать заново';
   }
 }
-
+ 
 function renderAll() {
   document.getElementById("content").innerHTML =
     '<div class="toolbar">' +
@@ -458,13 +522,14 @@ function renderAll() {
     '</div><div class="cards" id="cards"></div>';
   renderCards();
 }
-
+ 
 function renderCards() {
   const c = document.getElementById("cards");
   if (!c) return;
   c.innerHTML = "";
   DATA.forEach((d, i) => {
     const saved = isInVocab(d.french);
+    const lvl = d.level || currentLevel;
     const el = document.createElement("div");
     el.className = "card";
     el.id = "card-" + i;
@@ -473,6 +538,7 @@ function renderCards() {
         <svg width="14" height="14" viewBox="0 0 24 24" fill="${saved?"currentColor":"none"}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       </button>
       <div class="card-badges">
+        <span class="badge b-level-${lvl}">${esc(lvl)}</span>
         <span class="badge b-verb">${esc(d.verb)}</span>
         <span class="badge b-tense">${esc(d.tense)}</span>
         <span class="badge b-topic">${esc(d.topic)}</span>
@@ -488,7 +554,7 @@ function renderCards() {
       <div class="answer-block" id="ans-${i}">
         <div class="answer-fr">${hlVerb(d.verb_highlighted || d.french)}</div>
         <div class="answer-note">${esc(d.hint)}</div>
-       <div class="select-hint">✏️ Выделите любое выражение мышью</div>
+        <div class="select-hint">✏️ Выделите любое выражение мышью</div>
         <button class="btn-ask" onclick="toggleChat(${i})">💬 Задать вопрос по этой карточке</button>
         <div class="chat-block" id="chat-${i}">
           <div class="chat-messages" id="chat-msgs-${i}"></div>
@@ -497,14 +563,15 @@ function renderCards() {
             <button class="btn-chat-send" id="chat-btn-${i}" onclick="sendChat(${i})">Спросить</button>
           </div>
         </div>
-<button class="btn-save-selection" id="selbtn-${i}" onclick="openSaveModal()">
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-  Сохранить выделенное
-</button>`;
+        <button class="btn-save-selection" id="selbtn-${i}" onclick="openSaveModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+          Сохранить выделенное
+        </button>
+      </div>`;
     c.appendChild(el);
   });
 }
-
+ 
 function getVerb(h) { const m = (h||"").match(/\*\*(.+?)\*\*/); return m ? norm(m[1]) : ""; }
 function userHasVerb(input, verbForm) {
   if (!verbForm) return false;
@@ -536,7 +603,8 @@ function reveal(i) {
 }
 function updCount() { const el = document.getElementById("ct-rev"); if (el) el.textContent = revealed; }
 function doShuffle() { shuffle(DATA); revealed = 0; renderCards(); updCount(); }
-    function renderVocab() {
+ 
+function renderVocab() {
   const list = document.getElementById("vocab-list");
   if (!vocab.length) {
     list.innerHTML = '<div class="empty-state">Выделите текст в ответе карточки, чтобы сохранить выражение</div>';
@@ -550,9 +618,9 @@ function doShuffle() { shuffle(DATA); revealed = 0; renderCards(); updCount(); }
     list.appendChild(el);
   });
 }
-
+ 
 function delVocab(id) { removeFromVocab(id); renderVocab(); }
-
+ 
 function openExportModal() {
   if (!vocab.length) { alert("Словарь пуст — сначала сохраните выражения"); return; }
   document.getElementById("export-text").value = vocab.map(v => v.fr + "\t" + v.ru).join("\n");
@@ -567,9 +635,9 @@ function copyExport() {
   document.execCommand("copy");
   showToast("Скопировано ✓");
 }
-
+ 
 let fcList = [], fcIdx = 0, fcKnow = 0, fcSkip = 0, fcChecked = false;
-
+ 
 function startFlash() {
   if (!vocab.length) {
     document.getElementById("flash-content").innerHTML = '<div class="empty-state">Сначала сохраните несколько выражений в словарь</div>';
@@ -579,7 +647,7 @@ function startFlash() {
   fcIdx = 0; fcKnow = 0; fcSkip = 0; fcChecked = false;
   renderFlash();
 }
-
+ 
 function renderFlash() {
   const fc = document.getElementById("flash-content");
   if (fcIdx >= fcList.length) {
@@ -619,7 +687,7 @@ function renderFlash() {
     </div>`;
   document.getElementById("fc-inp").focus();
 }
-
+ 
 function fcCheck() {
   if (fcChecked) return;
   const inp = document.getElementById("fc-inp");
@@ -647,7 +715,7 @@ function fcCheck() {
       <button class="btn-fc-know" onclick="fcNext(true)">Дальше →</button>
     </div>`;
 }
-
+ 
 function fcNext(know) {
   if (!know) {
     const pos = fcIdx + 2 + Math.floor(Math.random() * 3);
@@ -657,8 +725,7 @@ function fcNext(know) {
   fcChecked = false;
   renderFlash();
 }
-   const SYSTEM_CHAT = `Tu es un professeur de FLE qui aide un étudiant russophone à préparer le TCF Canada. Réponds en russe, de façon courte et claire (3-5 phrases max). Explique uniquement ce qui est demandé.`;
-
+ 
 function toggleChat(i) {
   const block = document.getElementById("chat-"+i);
   if (!block) return;
@@ -666,30 +733,26 @@ function toggleChat(i) {
   block.classList.toggle("show", !isOpen);
   if (!isOpen) document.getElementById("chat-inp-"+i).focus();
 }
-
+ 
 async function sendChat(i) {
   const inp = document.getElementById("chat-inp-"+i);
   const btn = document.getElementById("chat-btn-"+i);
   const msgs = document.getElementById("chat-msgs-"+i);
   const question = inp.value.trim();
   if (!question || !DATA[i]) return;
-
   const d = DATA[i];
-  const context = `Карточка: "${d.russian}" → "${d.french}" (глагол: ${d.verb}, время: ${d.tense}, тема: ${d.topic})`;
-
+  const context = `Карточка: "${d.russian}" → "${d.french}" (глагол: ${d.verb}, время: ${d.tense}, тема: ${d.topic}, уровень: ${d.level || currentLevel})`;
   const userDiv = document.createElement("div");
   userDiv.className = "chat-msg user";
   userDiv.textContent = question;
   msgs.appendChild(userDiv);
   inp.value = "";
   btn.disabled = true;
-
   const loadingDiv = document.createElement("div");
   loadingDiv.className = "chat-msg assistant";
   loadingDiv.textContent = "…";
   msgs.appendChild(loadingDiv);
   msgs.scrollTop = msgs.scrollHeight;
-
   try {
     const answer = await callAPI(SYSTEM_CHAT, `${context}\n\nВопрос студента: ${question}`, 500);
     loadingDiv.textContent = answer.trim();
@@ -700,7 +763,8 @@ async function sendChat(i) {
     msgs.scrollTop = msgs.scrollHeight;
   }
 }
-    function switchTab(name, btn) {
+ 
+function switchTab(name, btn) {
   document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
   btn.classList.add("active");
   document.getElementById("pane-practice").style.display = name === "practice" ? "" : "none";
@@ -712,3 +776,4 @@ async function sendChat(i) {
 </script>
 </body>
 </html>
+ 
