@@ -203,7 +203,7 @@ h1{font-size:18px;font-weight:500;margin-bottom:1.5rem}
  
       <button class="btn-primary" id="btn-gen" onclick="generate()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-        Сгенерировать 30 упражнений
+        Сгенерировать 12 упражнений
       </button>
     </div>
   </div>
@@ -486,7 +486,7 @@ function buildPrompt(topic, tense, verb, level) {
   const verbLine = (!verb || verb === "all")
     ? "Verbes irréguliers à varier : " + VERBS.join(", ")
     : 'RÈGLE ABSOLUE: toutes les 30 phrases utilisent UNIQUEMENT le verbe "' + verb + '". Le champ "verb" doit toujours valoir "' + verb + '". Aucun autre verbe conjugué.';
-  return "Génère exactement 30 exercices de traduction russe→français.\nTemps : " + tenses + "\nTopics TCF : " + topics + "\n" + verbLine + "\nNiveau lexical : " + level + " (respecte strictement la rubrique du system prompt)\nVarie les sujets grammaticaux.\nRetourne UNIQUEMENT le tableau JSON (30 objets). Rien d'autre.";
+  return "Génère exactement 12 exercices de traduction russe→français.\nTemps : " + tenses + "\nTopics TCF : " + topics + "\n" + verbLine + "\nNiveau lexical : " + level + " (respecte strictement la rubrique du system prompt)\nRÈGLE ABSOLUE sur les sujets grammaticaux : exactement 2 phrases par personne, dans cet ordre — 2× je, 2× tu, 2× il/elle, 2× nous, 2× vous, 2× ils/elles. Aucune personne ne doit être omise.\nRetourne UNIQUEMENT le tableau JSON (12 objets). Rien d'autre.";
 }
  
 let DATA = [], revealed = 0;
@@ -510,7 +510,7 @@ async function generate() {
     document.getElementById("content").innerHTML = '<div class="error-msg">Ошибка: ' + esc(String(e)) + '. Попробуйте ещё раз.</div>';
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Сгенерировать заново';
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Сгенерировать заново (12)';
   }
 }
  
